@@ -1,1 +1,366 @@
 /* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f0f2f5;
+}
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #808080;
+  padding: 20px;
+}
+
+.auth-card {
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+}
+
+.auth-image {
+  flex: 1;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.auth-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.auth-form {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.auth-tab {
+  padding: 10px 20px;
+  font-size: 18px;
+  color: #6c757d;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+
+.auth-tab.active {
+  color: #b02a37;
+  border-bottom: 2px solid #b02a37;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #b02a37;
+  outline: none;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.btn {
+  cursor: pointer;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #b02a37;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #9a2530;
+}
+
+.btn-block {
+  width: 100%;
+  display: block;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-3 {
+  margin-top: 15px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #eee;
+}
+
+.divider span {
+  padding: 0 10px;
+  color: #6c757d;
+}
+
+.social-login {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.social-btn.facebook {
+  background-color: #3b5998;
+  color: white;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: -15px;
+  margin-bottom: 20px;
+}
+
+.forgot-password a {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.signup-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #b02a37;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .auth-card {
+    flex-direction: column;
+  }
+
+  .auth-image {
+    padding: 20px;
+  }
+
+  .auth-image img {
+    max-width: 150px;
+  }
+
+  .auth-form {
+    padding: 20px;
+  }
+}
+
+/* Dashboard styles */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  background-color: white;
+  overflow-x: hidden;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.book-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.book-image {
+  height: 200px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.book-details {
+  padding: 15px;
+}
+
+.book-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.book-author {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.book-price {
+  font-size: 18px;
+  font-weight: 500;
+  color: #b02a37;
+  margin-bottom: 10px;
+}
+
+.book-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Utility classes */
+.d-flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.mb-3 {
+  margin-bottom: 15px;
+}
+
+.mb-4 {
+  margin-bottom: 20px;
+}
+
+.p-3 {
+  padding: 15px;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,0 +1,161 @@
+<!-- login.component.html -->
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Left Side - Image Section -->
+    <div class="auth-image">
+      <img src="/assets/images/lady.png" alt="Book Shopping" />
+      <h2>ONLINE BOOK SHOPPING</h2>
+    </div>
+
+    <!-- Right Side - Form Section -->
+    <div class="auth-form">
+      <!-- Tabs for Login/Signup -->
+      <div class="auth-tabs">
+        <a 
+          class="auth-tab" 
+          [class.active]="activeTab === 'login'"
+          (click)="activeTab === 'login' ? null : toggleTab('login')"
+        >
+          LOGIN
+        </a>
+        <a 
+          class="auth-tab" 
+          [class.active]="activeTab === 'register'"
+          (click)="activeTab === 'register' ? null : toggleTab('register')"
+        >
+          SIGNUP
+        </a>
+      </div>
+
+      <!-- Login Form -->
+      <form *ngIf="activeTab === 'login'" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="loginEmail">Email Id</label>
+          <input 
+            type="email" 
+            id="loginEmail"
+            formControlName="email"
+            class="form-control"
+            placeholder="example@email.com"
+          >
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="password-field">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              id="loginPassword"
+              formControlName="password"
+              class="form-control"
+              placeholder="Enter password"
+            >
+            <!-- Eye Icon for Password Toggle -->
+            <span 
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+            >
+              <i class="bi bi-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="forgot-password">
+          <a href="#">Forgot Password?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="loginForm.invalid || isSubmitting"
+        >
+          {{ isSubmitting ? 'Please Wait...' : 'Login' }}
+        </button>
+      </form>
+
+      <!-- Signup Form -->
+      <form *ngIf="activeTab === 'register'" [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            type="text" 
+            id="firstName"
+            formControlName="firstName"
+            class="form-control"
+            placeholder="Enter first name"
+          >
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            type="text" 
+            id="lastName"
+            formControlName="lastName"
+            class="form-control"
+            placeholder="Enter last name"
+          >
+        </div>
+
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="signupEmail">Email Id</label>
+          <input 
+            type="email" 
+            id="signupEmail"
+            formControlName="email"
+            class="form-control"
+            placeholder="example@email.com"
+          >
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="password-field">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              id="signupPassword"
+              formControlName="password"
+              class="form-control"
+              placeholder="Create password"
+            >
+            <span 
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+            >
+              <i class="bi bi-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="form-control"
+            placeholder="Confirm password"
+          >
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="registerForm.invalid || isSubmitting"
+        >
+          {{ isSubmitting ? 'Creating Account...' : 'Signup' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

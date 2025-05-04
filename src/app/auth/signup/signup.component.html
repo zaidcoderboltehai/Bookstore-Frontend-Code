@@ -1,0 +1,119 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-image">
+      <img src="/assets/images/lady.png" alt="Online Book Shopping" />
+      <h2>ONLINE BOOK SHOPPING</h2>
+    </div>
+    
+    <div class="auth-form">
+      <div class="auth-tabs">
+        <a routerLink="/auth/login" class="auth-tab">LOGIN</a>
+        <a routerLink="/auth/signup" class="auth-tab active">SIGNUP</a>
+      </div>
+      
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            formControlName="firstName" 
+            class="form-control" 
+            placeholder="Enter first name"
+          >
+          <div *ngIf="f['firstName'].touched && f['firstName'].errors" class="text-danger">
+            <div *ngIf="f['firstName'].errors['required']">First name required</div>
+            <div *ngIf="f['firstName'].errors['minlength']">Minimum 2 characters</div>
+          </div>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            formControlName="lastName" 
+            class="form-control" 
+            placeholder="Enter last name"
+          >
+          <div *ngIf="f['lastName'].touched && f['lastName'].errors" class="text-danger">
+            <div *ngIf="f['lastName'].errors['required']">Last name required</div>
+            <div *ngIf="f['lastName'].errors['minlength']">Minimum 2 characters</div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Id</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control" 
+            placeholder="Enter your email"
+          >
+          <div *ngIf="f['email'].touched && f['email'].errors" class="text-danger">
+            <div *ngIf="f['email'].errors['required']">Email required</div>
+            <div *ngIf="f['email'].errors['email']">Invalid email format</div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-field">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              id="password" 
+              formControlName="password" 
+              class="form-control" 
+              placeholder="Create password"
+            >
+            <span class="password-toggle" (click)="togglePasswordVisibility()">
+              <i class="bi bi-eye"></i>
+            </span>
+          </div>
+          <div *ngIf="f['password'].touched && f['password'].errors" class="text-danger">
+            <div *ngIf="f['password'].errors['required']">Password required</div>
+            <div *ngIf="f['password'].errors['minlength']">Minimum 6 characters</div>
+          </div>
+        </div>
+
+        <!-- Confirm Password (Corrected Section) -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            formControlName="confirmPassword" 
+            class="form-control" 
+            placeholder="Confirm password"
+          >
+          <!-- Show error only after interaction -->
+          <div *ngIf="signupForm.errors?.['mismatch'] && signupForm.get('confirmPassword')?.touched" 
+               class="text-danger">
+            Passwords do not match
+          </div>
+        </div>
+
+        <!-- Signup Button -->
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="signupForm.invalid || isLoading"
+        >
+          {{ isLoading ? 'Signing up...' : 'Sign Up' }}
+        </button>
+
+        <!-- Terms -->
+        <div class="terms">
+          By signing up, you agree to our 
+          <a href="#">Terms of Service</a> and 
+          <a href="#">Privacy Policy</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

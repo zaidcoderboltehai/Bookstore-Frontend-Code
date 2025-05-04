@@ -1,0 +1,159 @@
+<div class="book-detail-container">
+    <!-- Header Section -->
+    <header class="header">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="book-icon">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <span>Bookstore</span>
+      </div>
+  
+      <!-- Search Bar -->
+      <div class="search-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="Search..." class="search-input">
+      </div>
+  
+      <!-- User Actions -->
+      <div class="user-actions">
+        <a class="user-action" routerLink="/profile">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Profile</span>
+        </a>
+  
+        <a class="user-action" routerLink="/cart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span>Cart</span>
+        </a>
+      </div>
+    </header>
+  
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb">
+      <a routerLink="/">Home</a> / <span>{{ book.title }}</span>
+    </div>
+  
+    <!-- Book Detail Content -->
+    <div class="book-detail-content">
+      <!-- Left Side - Book Images -->
+      <div class="book-images">
+        <div class="main-image">
+          <img [src]="book.imageUrl" [alt]="book.title">
+        </div>
+        <div class="thumbnail-images">
+          <div class="thumbnail active">
+            <img [src]="book.imageUrl" [alt]="book.title">
+          </div>
+          <div class="thumbnail">
+            <img src="assets/images/Image 7@2x.png" [alt]="book.title">
+          </div>
+        </div>
+      </div>
+  
+      <!-- Right Side - Book Info -->
+      <div class="book-info">
+        <h1 class="book-title">{{ book.title }}</h1>
+        <p class="book-author">by {{ book.author }}</p>
+        
+        <!-- Rating -->
+        <div class="book-rating">
+          <span class="rating-value">{{ book.rating }}</span>
+          <div class="stars">
+            <span *ngFor="let star of [1,2,3,4,5]" class="star" 
+                  [class.filled]="star <= book.rating" 
+                  [class.half-filled]="star - 0.5 === book.rating">★</span>
+          </div>
+          <span class="review-count">({{ book.reviewCount }})</span>
+        </div>
+        
+        <!-- Price -->
+        <div class="book-price">
+          <span class="current-price">Rs.{{ book.currentPrice }}</span>
+          <span class="original-price">Rs.{{ book.originalPrice }}</span>
+        </div>
+        
+        <!-- Book Detail -->
+        <div class="book-detail-section">
+          <h3>Book Detail</h3>
+          <p class="book-description">{{ book.description }}</p>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="book-actions">
+          <button class="add-to-bag-btn" (click)="addToCart()">ADD TO BAG</button>
+          <button class="wishlist-btn" (click)="addToWishlist()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            WISHLIST
+          </button>
+        </div>
+        
+        <!-- Customer Feedback -->
+        <div class="customer-feedback">
+          <h3>Customer Feedback</h3>
+          
+          <!-- Rating Selection -->
+          <div class="rating-selection">
+            <p>Overall rating</p>
+            <div class="rating-stars">
+              <span *ngFor="let star of [1,2,3,4,5]" 
+                    class="rating-star" 
+                    [class.selected]="rating >= star"
+                    (click)="setRating(star)">★</span>
+            </div>
+          </div>
+          
+          <!-- Review Form -->
+          <div class="review-form">
+            <textarea 
+              [(ngModel)]="reviewText"
+              placeholder="Write your review" 
+              class="review-textarea"></textarea>
+            <button class="submit-review-btn" (click)="submitReview()">Submit</button>
+          </div>
+          
+          <!-- Reviews List -->
+          <div class="reviews-list">
+            <div class="review-item">
+              <div class="reviewer-info">
+                <div class="reviewer-avatar">AC</div>
+                <div class="reviewer-name">Aniket Chile</div>
+              </div>
+              <div class="review-rating">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      class="star" 
+                      [class.filled]="star <= 3">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        Copyright © 2020, Bookstore Private Limited. All Rights Reserved
+      </div>
+    </footer>
+  </div>
+  
