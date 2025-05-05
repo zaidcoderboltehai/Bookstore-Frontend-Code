@@ -1,0 +1,21 @@
+<div class="order-summary-container" *ngIf="isVisible">
+    <div class="order-summary-content">
+      <h2 class="section-title">Order summary</h2>
+      
+      <div class="order-item">
+        <div class="item-image">
+          <img [src]="orderDetails.imageUrl" [alt]="orderDetails.title">
+        </div>
+        <div class="item-details">
+          <h3 class="item-title">{{ orderDetails.title }}</h3>
+          <p class="item-author">by {{ orderDetails.author }}</p>
+          <p class="item-price">Rs. {{ orderDetails.price }}</p>
+        </div>
+      </div>
+      
+      <div class="checkout-action">
+        <button class="checkout-btn" (click)="onCheckout()">CHECKOUT</button>
+      </div>
+    </div>
+  </div>
+  

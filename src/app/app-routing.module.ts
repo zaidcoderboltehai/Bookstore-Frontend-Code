@@ -36,6 +36,12 @@ export const routes: Routes = [
       import("./book-detail/book-detail.component").then((m) => m.BookDetailComponent),
     title: "Book Details - Bookstore",
   },
+  {
+    path: "cart",
+    loadComponent: () => 
+      import("./cart/cart.component").then((m) => m.CartComponent),
+    title: "My Cart - Bookstore",
+  },
   { 
     path: "", 
     redirectTo: "auth/login", 

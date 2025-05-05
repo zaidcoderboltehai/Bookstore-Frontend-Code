@@ -2,13 +2,14 @@ import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { ActivatedRoute, RouterModule } from "@angular/router"
 import { FormsModule } from "@angular/forms"
+import { BookDetailQuantityComponent } from "../book-detail-quantity/book-detail-quantity.component"
 
 @Component({
   selector: "app-book-detail",
   templateUrl: "./book-detail.component.html",
   styleUrls: ["./book-detail.component.scss"],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, BookDetailQuantityComponent],
 })
 export class BookDetailComponent implements OnInit {
   book: any = {}
