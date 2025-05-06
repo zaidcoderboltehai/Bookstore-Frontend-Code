@@ -1,6 +1,7 @@
 import { Component, Input, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { CartService, type CartItem } from "../services/cart.service"
+import { WishlistService } from "../services/wishlist.service" // New import
 
 @Component({
   selector: "app-book-detail-quantity",
@@ -17,7 +18,7 @@ import { CartService, type CartItem } from "../services/cart.service"
         <button class="quantity-btn" (click)="increaseQuantity()">+</button>
       </div>
       
-      <button class="wishlist-btn" (click)="addToWishlist()">
+      <button class="wishlist-btn" [class.active]="isInWishlist" (click)="addToWishlist()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -105,6 +106,14 @@ import { CartService, type CartItem } from "../services/cart.service"
     .wishlist-btn:hover {
       background-color: #222;
     }
+    
+    .wishlist-btn.active {
+      background-color: #b02a37;
+    }
+    
+    .wishlist-btn.active svg {
+      fill: white;
+    }
   `,
   ],
 })
@@ -116,8 +125,13 @@ export class BookDetailQuantityComponent implements OnInit {
 
   quantity = 1
   showQuantity = false
+  isInWishlist = false // New property
+  isLoading = false // New property
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    private cartService: CartService,
+    private wishlistService: WishlistService // New service
+  ) {}
 
   ngOnInit(): void {
     // Check if book is already in cart
@@ -128,6 +142,14 @@ export class BookDetailQuantityComponent implements OnInit {
       this.quantity = existingItem.quantity
       this.showQuantity = true
     }
+
+    // Check if book is in wishlist - New code
+    this.isInWishlist = this.wishlistService.isInWishlist(this.bookId)
+    
+    // Subscribe to wishlist changes - New code
+    this.wishlistService.wishlistItems$.subscribe(items => {
+      this.isInWishlist = items.some(item => item.bookId === this.bookId)
+    })
 
     // Update cart badge on init
     this.updateCartBadge(this.cartService.getCartItemCount())
@@ -174,8 +196,18 @@ export class BookDetailQuantityComponent implements OnInit {
   }
 
   addToWishlist(): void {
-    // Wishlist functionality (not implemented)
-    console.log("Adding to wishlist:", this.bookId)
+    // Updated wishlist functionality
+    if (this.isLoading) return
+    
+    this.isLoading = true
+    this.wishlistService.toggleWishlist(this.bookId).subscribe({
+      next: () => {
+        this.isLoading = false
+      },
+      error: () => {
+        this.isLoading = false
+      }
+    })
   }
 
   private updateCartBadge(count: number): void {

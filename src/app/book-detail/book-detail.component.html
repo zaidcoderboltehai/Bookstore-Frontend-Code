@@ -1,7 +1,7 @@
 <div class="book-detail-container">
   <!-- Header Section -->
   <header class="header">
-    <div class="logo">
+    <div class="logo" style="cursor: pointer;" routerLink="/dashboard">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
           class="book-icon">
@@ -50,6 +50,22 @@
     <a routerLink="/">Home</a> / <span>{{ book.title }}</span>
   </div>
 
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite;"></div>
+    <span style="margin-left: 10px;">Loading book details...</span>
+  </div>
+
+  <!-- API Data Indicator -->
+  <div *ngIf="book.id && !isLoading" class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+    <p style="margin: 0;">Data loaded from API successfully!</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+    <p style="margin: 0;">{{ errorMessage }}</p>
+  </div>
+
   <!-- Book Detail Content -->
   <div class="book-detail-content">
     <!-- Left Side - Book Images -->
@@ -69,7 +85,15 @@
 
     <!-- Right Side - Book Info -->
     <div class="book-info">
-      <h1 class="book-title">{{ book.title }}</h1>
+      <h3 class="book-title">
+        {{ book.title }}
+        <small *ngIf="book.title === 'Don\'t Make Me Think' && !isLoading" style="color: red; font-size: 12px; margin-left: 10px;">
+          (Fallback Data)
+        </small>
+        <small *ngIf="book.title !== 'Don\'t Make Me Think'" style="color: green; font-size: 12px; margin-left: 10px;">
+          (API Data)
+        </small>
+      </h3>
       <p class="book-author">by {{ book.author }}</p>
       
       <!-- Rating -->
@@ -152,3 +176,10 @@
     </div>
   </footer>
 </div>
+
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

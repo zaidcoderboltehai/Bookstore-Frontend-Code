@@ -1,67 +1,85 @@
 <div class="address-details-container" *ngIf="isVisible">
-    <div class="address-details-content">
-      <h2 class="section-title">Customer Details</h2>
-      
-      <div class="add-new-btn-container">
-        <button class="add-new-btn" (click)="addNewAddress()">Add New Address</button>
+  <div class="address-details-content">
+    <h2 class="section-title">Customer Details</h2>
+    
+    <div class="add-new-btn-container">
+      <button class="add-new-btn" (click)="addNewAddress()">Add New Address</button>
+    </div>
+    
+    <div class="customer-info">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="customerName" placeholder="Enter your full name">
       </div>
-      
-      <div class="customer-info">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" [(ngModel)]="customerName" placeholder="Enter your full name">
+    </div>
+    
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" style="text-align: center; padding: 20px;">
+      <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #b02a37; animation: spin 1s linear infinite;"></div>
+      <p>Loading addresses...</p>
+    </div>
+    
+    <!-- Error message -->
+    <div *ngIf="errorMessage" style="color: #b02a37; padding: 10px; background-color: #f8d7da; border-radius: 4px; margin-bottom: 15px;">
+      {{ errorMessage }}
+    </div>
+    
+    <div class="address-list">
+      <!-- Existing Addresses -->
+      <div *ngFor="let address of addresses; let i = index" class="address-item" [class.selected]="selectedAddressId === address.id" (click)="selectAddress(address.id)">
+        <div class="address-type">
+          <span class="type-indicator">{{ i + 1 }}</span>
+          <span class="type-name">{{ address.type }}</span>
+          <button class="edit-btn" (click)="editAddress(address.id); $event.stopPropagation()">Edit</button>
         </div>
-      </div>
-      
-      <div class="address-list">
-        <!-- Existing Addresses -->
-        <div *ngFor="let address of addresses; let i = index" class="address-item" [class.selected]="selectedAddressId === address.id" (click)="selectAddress(address.id)">
-          <div class="address-type">
-            <span class="type-indicator">{{ i + 1 }}</span>
-            <span class="type-name">{{ address.type }}</span>
-            <button class="edit-btn" (click)="editAddress(address.id); $event.stopPropagation()">Edit</button>
+        
+        <div class="address-details">
+          <div class="form-group">
+            <label>Address</label>
+            <textarea [(ngModel)]="address.addressLine" [disabled]="!isEditing || editingAddressId !== address.id"></textarea>
           </div>
           
-          <div class="address-details">
+          <div class="address-meta-fields">
             <div class="form-group">
-              <label>Address</label>
-              <textarea [(ngModel)]="address.addressLine" [disabled]="!isEditing || editingAddressId !== address.id"></textarea>
+              <label>City/Town</label>
+              <input type="text" [(ngModel)]="address.city" [disabled]="!isEditing || editingAddressId !== address.id">
             </div>
             
-            <div class="address-meta-fields">
-              <div class="form-group">
-                <label>City/Town</label>
-                <input type="text" [(ngModel)]="address.city" [disabled]="!isEditing || editingAddressId !== address.id">
-              </div>
-              
-              <div class="form-group">
-                <label>State</label>
-                <input type="text" [(ngModel)]="address.state" [disabled]="!isEditing || editingAddressId !== address.id">
-              </div>
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" [(ngModel)]="address.state" [disabled]="!isEditing || editingAddressId !== address.id">
             </div>
+          </div>
+          
+          <!-- Save/Cancel buttons when editing -->
+          <div *ngIf="isEditing && editingAddressId === address.id" class="edit-actions" style="margin-top: 10px; text-align: right;">
+            <button (click)="saveAddress(); $event.stopPropagation()" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 10px;">Save</button>
+            <button (click)="isEditing = false; editingAddressId = null; $event.stopPropagation()" style="background-color: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Cancel</button>
+            <button *ngIf="address.id !== 1 && address.id !== 2" (click)="deleteAddress(address.id); $event.stopPropagation()" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-left: 10px;">Delete</button>
           </div>
         </div>
       </div>
-      
-      <!-- Continue Button -->
-      <div class="action-buttons">
-        <button class="continue-btn" (click)="continueToPayment()">CONTINUE</button>
-      </div>
-      
-      <!-- Order Summary Component -->
-      <app-order-summary 
-        [isVisible]="showOrderSummary"
-        [orderDetails]="{
-          title: 'Don\'t Make Me Think',
-          author: 'Steve Krug',
-          price: 1500,
-          originalPrice: 2000,
-          imageUrl: 'assets/images/Image 11@2x.png'
-        }"
-        (checkout)="handleCheckout()"
-      ></app-order-summary>
     </div>
+    
+    <!-- Continue Button -->
+    <div class="action-buttons">
+      <button class="continue-btn" (click)="continueToPayment()">CONTINUE</button>
+    </div>
+    
+    <!-- Order Summary Component -->
+    <app-order-summary 
+      [isVisible]="showOrderSummary"
+      [orderDetails]="{
+        title: 'Don\'t Make Me Think',
+        author: 'Steve Krug',
+        price: 1500,
+        originalPrice: 2000,
+        imageUrl: 'assets/images/Image 11@2x.png'
+      }"
+      (checkout)="handleCheckout()"
+    ></app-order-summary>
   </div>
-  
-  <!-- Order Confirmation Component -->
-  <app-order-confirmation [isVisible]="showOrderConfirmation"></app-order-confirmation>
+</div>
+
+<!-- Order Confirmation Component -->
+<app-order-confirmation [isVisible]="showOrderConfirmation"></app-order-confirmation>

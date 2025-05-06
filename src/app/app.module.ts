@@ -1,7 +1,7 @@
 // src/app/app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -13,6 +13,10 @@ import { CartComponent } from './cart/cart.component';
 import { AddressDetailsComponent } from './address-details/address-details.component';
 import { OrderSummaryComponent } from './order-summary/order-summary.component';
 import { OrderConfirmationComponent } from './order-confirmation/order-confirmation.component';
+import { AuthInterceptor } from './services/auth.interceptor';
+import { BookDetailService } from './services/book-detail.service';
+import { WishlistService } from './services/wishlist.service';
+import { WishlistComponent } from './wishlist/wishlist.component'; // New import
 
 @NgModule({
   declarations: [
@@ -22,7 +26,7 @@ import { OrderConfirmationComponent } from './order-confirmation/order-confirmat
     // Angular modules
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
+    HttpClientModule, // HTTP requests ke liye important
     RouterModule,
     
     // Material Design modules
@@ -37,9 +41,16 @@ import { OrderConfirmationComponent } from './order-confirmation/order-confirmat
     CartComponent,
     AddressDetailsComponent,
     OrderSummaryComponent,  // OrderSummaryComponent ko declarations se imports mein move kiya
-    OrderConfirmationComponent  // OrderConfirmationComponent ko imports mein add kiya
+    OrderConfirmationComponent,  // OrderConfirmationComponent ko imports mein add kiya
+    WishlistComponent // WishlistComponent ko declarations se imports mein move kiya
   ],
-  providers: [],
+  providers: [
+    // Auth interceptor for adding JWT token to requests
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    // Services
+    BookDetailService,
+    WishlistService, // New service
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
