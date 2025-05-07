@@ -82,7 +82,24 @@ export class AddressDetailsComponent implements OnInit {
             city: addr.city,
             state: addr.state,
           }))
+          console.log("Mapped addresses:", this.addresses)
+          console.log(
+            "Address IDs after mapping:",
+            this.addresses.map((addr) => addr.id),
+          )
+
+          // YE CODE ADD KARO - Auto-correction for selected address
+          if (this.addresses.length > 0) {
+            // Check if selected address exists in the list
+            const addressExists = this.addresses.some((addr) => addr.id === this.selectedAddressId)
+            if (!addressExists) {
+              // If not, select the first address
+              this.selectedAddressId = this.addresses[0].id
+              console.log("Auto-corrected selected address to:", this.selectedAddressId)
+            }
+          }
         }
+
         // If no addresses found, we'll keep the mock data initialized in constructor
 
         // Set first address as selected if none is selected
@@ -101,6 +118,11 @@ export class AddressDetailsComponent implements OnInit {
   }
 
   selectAddress(addressId: number): void {
+    console.log("Selecting address ID:", addressId)
+    console.log(
+      "Available address IDs:",
+      this.addresses.map((addr) => addr.id),
+    )
     this.selectedAddressId = addressId
   }
 
@@ -125,12 +147,16 @@ export class AddressDetailsComponent implements OnInit {
     this.editingAddressId = addressId
   }
 
-  // API Integration: Save address changes
+  // API Integration: Save address changes (Workaround using delete-and-recreate)
   saveAddress(): void {
     if (!this.editingAddressId) return
 
     const address = this.addresses.find((a) => a.id === this.editingAddressId)
     if (!address) return
+
+    // Show loading indicator
+    this.isLoading = true
+    this.errorMessage = ""
 
     const token = localStorage.getItem("bookstore_token")
     const headers = new HttpHeaders({
@@ -142,10 +168,9 @@ export class AddressDetailsComponent implements OnInit {
     const tokenData = this.decodeJwtToken(token)
     const userId = tokenData ? Number.parseInt(tokenData.nameid) : 0
 
-    // Prepare data for API with correct userId
+    // Prepare data for API
     const addressData = {
-      id: address.id,
-      userId: userId, // <-- CORRECT USER ID
+      userId: userId,
       fullName: this.customerName,
       addressLine1: address.addressLine,
       city: address.city,
@@ -153,40 +178,43 @@ export class AddressDetailsComponent implements OnInit {
       addressType: address.type,
     }
 
-    // Check if this is a new address or existing one
-    if (address.id > 100000) {
-      // Assuming new addresses have temporary high IDs
-      // Create new address
-      this.http.post(this.apiUrl, addressData, { headers }).subscribe({
-        next: (response: any) => {
-          console.log("Address created successfully:", response)
-          // Update address ID with the one from server
-          address.id = response.id
-          this.isEditing = false
-          this.editingAddressId = null
-        },
-        error: (error) => {
-          console.error("Error creating address:", error)
-          // Still exit edit mode even if there's an error
-          this.isEditing = false
-          this.editingAddressId = null
-        },
-      })
-    } else {
-      // Update existing address
-      this.http.put(`${this.apiUrl}/${address.id}`, addressData, { headers }).subscribe({
-        next: () => {
-          console.log("Address updated successfully")
-          this.isEditing = false
-          this.editingAddressId = null
-        },
-        error: (error) => {
-          console.error("Error updating address:", error)
-          this.isEditing = false
-          this.editingAddressId = null
-        },
-      })
-    }
+    console.log("Address data for recreation:", addressData)
+
+    // WORKAROUND: Since PUT is not working, we'll delete and recreate
+    // Step 1: Delete the existing address
+    this.http.delete(`${this.apiUrl}/${address.id}`, { headers }).subscribe({
+      next: () => {
+        console.log("Address deleted successfully, now creating new one")
+
+        // Step 2: Create a new address with updated data
+        this.http.post(this.apiUrl, addressData, { headers }).subscribe({
+          next: (response: any) => {
+            console.log("Address re-created successfully:", response)
+            this.isLoading = false
+            this.isEditing = false
+            this.editingAddressId = null
+            this.errorMessage = ""
+
+            // Refresh addresses list
+            this.loadAddresses()
+          },
+          error: (error) => {
+            console.error("Error creating address:", error)
+            this.isLoading = false
+            this.errorMessage = "Update failed: " + (error.error || error.message || error.statusText)
+            this.isEditing = false
+            this.editingAddressId = null
+          },
+        })
+      },
+      error: (error) => {
+        console.error("Error deleting address:", error)
+        this.isLoading = false
+        this.errorMessage = "Update failed: Could not delete existing address"
+        this.isEditing = false
+        this.editingAddressId = null
+      },
+    })
   }
 
   // Add this helper method to decode JWT token
@@ -250,6 +278,12 @@ export class AddressDetailsComponent implements OnInit {
 
   handleCheckout(): void {
     console.log("Proceeding to checkout")
+    console.log("Selected Address ID:", this.selectedAddressId)
+    console.log("Available Addresses:", this.addresses)
+    console.log(
+      "Address IDs in list:",
+      this.addresses.map((addr) => addr.id),
+    )
 
     // Create order with selected address
     if (this.selectedAddressId) {
@@ -259,6 +293,17 @@ export class AddressDetailsComponent implements OnInit {
         Authorization: `Bearer ${token}`,
       })
 
+      // Check if the selected address exists in the current address list
+      const addressExists = this.addresses.some((addr) => addr.id === Number(this.selectedAddressId))
+      console.log("Address exists in list?", addressExists)
+
+      if (!addressExists) {
+        console.error("Selected address does not exist in user's addresses")
+        this.errorMessage = "Selected address is not valid or does not belong to you. Please select another address."
+        return
+      }
+
+      // Now create the order with the verified address
       this.http
         .post(
           `${environment.apiUrl}/api/Order`,
@@ -272,16 +317,56 @@ export class AddressDetailsComponent implements OnInit {
             console.log("Order created successfully:", response)
             // Show order confirmation
             this.showOrderConfirmation = true
+            this.errorMessage = ""
           },
           error: (error) => {
             console.error("Error creating order:", error)
-            // Still show confirmation for demo purposes
-            this.showOrderConfirmation = true
+            console.error("Error status:", error.status)
+            console.error("Error details:", error.error)
+            this.errorMessage = error.error?.error || "Failed to create order. Please try again."
+
+            // Uncomment this line to show order confirmation even on error (for testing)
+            // this.showOrderConfirmation = true
           },
         })
     } else {
-      // Show order confirmation
-      this.showOrderConfirmation = true
+      this.errorMessage = "Please select a shipping address"
+    }
+  }
+
+  // Add this method for testing order confirmation
+  testOrderConfirmation(): void {
+    console.log("Testing order confirmation visibility")
+    this.showOrderConfirmation = true
+  }
+
+  // Helper method to verify if an address exists in the backend
+  private async verifyAddressExists(addressId: number, token: string | null): Promise<boolean> {
+    if (!token) return false
+
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    })
+
+    try {
+      // Try to fetch the specific address
+      const response = await this.http.get(`${this.apiUrl}/${addressId}`, { headers }).toPromise()
+      return !!response // If we get a response, the address exists
+    } catch (error) {
+      console.error("Error verifying address:", error)
+      return false // If there's an error, assume the address doesn't exist
+    }
+  }
+
+  // Add this method to reset address selection to the first available address
+  resetAddressSelection(): void {
+    if (this.addresses.length > 0) {
+      this.selectedAddressId = this.addresses[0].id
+      console.log("Reset address selection to:", this.selectedAddressId)
+
+      // Clear from localStorage if you're storing it there
+      localStorage.removeItem("selected_address_id")
     }
   }
 }

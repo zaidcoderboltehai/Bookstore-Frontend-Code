@@ -2,6 +2,13 @@
   <div class="address-details-content">
     <h2 class="section-title">Customer Details</h2>
     
+    <!-- Test button (remove after testing) -->
+    <button *ngIf="!showOrderConfirmation" 
+            (click)="testOrderConfirmation()" 
+            style="background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 15px; float: right;">
+      Test Order Confirmation
+    </button>
+    
     <div class="add-new-btn-container">
       <button class="add-new-btn" (click)="addNewAddress()">Add New Address</button>
     </div>

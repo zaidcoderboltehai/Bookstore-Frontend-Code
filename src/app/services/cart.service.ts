@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core"
-import { HttpClient } from "@angular/common/http"
-import { BehaviorSubject, Observable } from "rxjs"
+import { HttpClient, HttpHeaders } from "@angular/common/http"
+import { BehaviorSubject, type Observable } from "rxjs"
 import { environment } from "../../environments/environment"
 import { tap, catchError } from "rxjs/operators"
 
@@ -37,8 +37,14 @@ export class CartService {
 
   addToCart(item: CartItem): void {
     // First try to add to backend API
+    const token = localStorage.getItem("bookstore_token")
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    })
+
     this.http
-      .post(`${this.apiUrl}/api/Cart/${item.id}`, {})
+      .post(`${this.apiUrl}/api/Cart/${item.id}`, {}, { headers })
       .pipe(
         catchError((error) => {
           console.error("Error adding to cart API:", error)
@@ -69,9 +75,15 @@ export class CartService {
     const item = this.cartItems.find((i) => i.id === itemId)
 
     if (item) {
+      const token = localStorage.getItem("bookstore_token")
+      const headers = new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      })
+
       // Try to update in backend first
       this.http
-        .put(`${this.apiUrl}/api/Cart/${itemId}`, quantity)
+        .put(`${this.apiUrl}/api/Cart/${itemId}`, quantity, { headers })
         .pipe(
           catchError((error) => {
             console.error("Error updating cart quantity:", error)
@@ -101,9 +113,15 @@ export class CartService {
   }
 
   removeFromCart(itemId: number): void {
+    const token = localStorage.getItem("bookstore_token")
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    })
+
     // Try to remove from backend first
     this.http
-      .delete(`${this.apiUrl}/api/Cart/${itemId}`)
+      .delete(`${this.apiUrl}/api/Cart/${itemId}`, { headers })
       .pipe(
         catchError((error) => {
           console.error("Error removing from cart API:", error)
@@ -129,7 +147,13 @@ export class CartService {
   }
 
   purchaseCart(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/Cart/purchase`, {})
+    const token = localStorage.getItem("bookstore_token")
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    })
+
+    return this.http.post(`${this.apiUrl}/api/Cart/purchase`, {}, { headers })
   }
 
   private updateCart(): void {
@@ -155,7 +179,13 @@ export class CartService {
 
   // New method to fetch cart from API
   fetchCartFromApi(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/Cart`).pipe(
+    const token = localStorage.getItem("bookstore_token")
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    })
+
+    return this.http.get(`${this.apiUrl}/api/Cart`, { headers }).pipe(
       tap((response: any) => {
         if (response && response.items) {
           // Map API response to our CartItem format
