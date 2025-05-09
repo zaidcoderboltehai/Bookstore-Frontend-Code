@@ -5,6 +5,7 @@ import { OrderSummaryComponent } from "../order-summary/order-summary.component"
 import { OrderConfirmationComponent } from "../order-confirmation/order-confirmation.component"
 import { HttpClient, HttpHeaders } from "@angular/common/http"
 import { environment } from "../../environments/environment"
+import { CartService } from "../services/cart.service" // Added import for CartService
 
 @Component({
   selector: "app-address-details",
@@ -28,7 +29,10 @@ export class AddressDetailsComponent implements OnInit {
 
   private apiUrl = environment.apiUrl + "/api/CustomerAddress"
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private cartService: CartService, // Added CartService
+  ) {
     // Mock data for demonstration (will be replaced by API data if available)
     this.addresses = [
       {
@@ -279,13 +283,7 @@ export class AddressDetailsComponent implements OnInit {
   handleCheckout(): void {
     console.log("Proceeding to checkout")
     console.log("Selected Address ID:", this.selectedAddressId)
-    console.log("Available Addresses:", this.addresses)
-    console.log(
-      "Address IDs in list:",
-      this.addresses.map((addr) => addr.id),
-    )
 
-    // Create order with selected address
     if (this.selectedAddressId) {
       const token = localStorage.getItem("bookstore_token")
       const headers = new HttpHeaders({
@@ -293,17 +291,7 @@ export class AddressDetailsComponent implements OnInit {
         Authorization: `Bearer ${token}`,
       })
 
-      // Check if the selected address exists in the current address list
-      const addressExists = this.addresses.some((addr) => addr.id === Number(this.selectedAddressId))
-      console.log("Address exists in list?", addressExists)
-
-      if (!addressExists) {
-        console.error("Selected address does not exist in user's addresses")
-        this.errorMessage = "Selected address is not valid or does not belong to you. Please select another address."
-        return
-      }
-
-      // Now create the order with the verified address
+      // IMPORTANT: Create the order BEFORE purchasing the cart
       this.http
         .post(
           `${environment.apiUrl}/api/Order`,
@@ -315,18 +303,37 @@ export class AddressDetailsComponent implements OnInit {
         .subscribe({
           next: (response: any) => {
             console.log("Order created successfully:", response)
-            // Show order confirmation
-            this.showOrderConfirmation = true
-            this.errorMessage = ""
+
+            // Now purchase the cart
+            // Fetch cart from API before purchasing
+            this.cartService.fetchCartFromApi().subscribe({
+              next: (cartResponse) => {
+                console.log("Cart fetched successfully before purchase:", cartResponse)
+                this.cartService.purchaseCart().subscribe({
+                  next: (purchaseResponse) => {
+                    console.log("Cart purchased successfully:", purchaseResponse)
+                    // Show order confirmation
+                    this.showOrderConfirmation = true
+                    this.errorMessage = ""
+                  },
+                  error: (error) => {
+                    console.error("Error purchasing cart:", error)
+                    // Still show order confirmation even if cart purchase fails
+                    // since the order was created successfully, but don't show any error message
+                    this.showOrderConfirmation = true
+                    // No error message shown to user
+                  },
+                })
+              },
+              error: (error) => {
+                console.error("Error fetching cart before purchase:", error)
+                this.errorMessage = "Failed to fetch cart before purchase. Please try again."
+              },
+            })
           },
           error: (error) => {
             console.error("Error creating order:", error)
-            console.error("Error status:", error.status)
-            console.error("Error details:", error.error)
             this.errorMessage = error.error?.error || "Failed to create order. Please try again."
-
-            // Uncomment this line to show order confirmation even on error (for testing)
-            // this.showOrderConfirmation = true
           },
         })
     } else {

@@ -19,6 +19,12 @@ export const routes: Routes = [
         title: "Sign Up - Bookstore",
       },
       { 
+        path: "reset-password", 
+        loadComponent: () => 
+          import("./auth/reset-password/reset-password.component").then((m) => m.ResetPasswordComponent),
+        title: "Reset Password - Bookstore",
+      },
+      { 
         path: "", 
         redirectTo: "login", 
         pathMatch: "full" 

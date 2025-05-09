@@ -4,6 +4,8 @@ import { RouterModule, Router, NavigationStart } from "@angular/router";
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 @Component({
   selector: "app-login",
@@ -24,6 +26,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private dialog: MatDialog,
     @Optional() public dialogRef: MatDialogRef<LoginComponent, any>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { isModal: boolean }
   ) {
@@ -141,5 +144,13 @@ export class LoginComponent {
       return error.error?.errors?.[0]?.message || "Invalid registration data";
     }
     return "Registration failed. Please try again.";
+  }
+
+  openForgotPasswordModal(event: Event): void {
+    event.preventDefault();
+    this.dialog.open(ForgotPasswordComponent, {
+      width: '400px',
+      disableClose: false
+    });
   }
 }

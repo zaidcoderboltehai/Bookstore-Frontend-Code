@@ -258,5 +258,11 @@
       border-radius: 0 0 10px 10px;
       box-shadow: none;
     }
+    /* Error message styles */
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
   }
 }

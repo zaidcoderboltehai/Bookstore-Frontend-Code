@@ -90,4 +90,23 @@ export class AuthService {
   getRefreshToken(): string | null {
     return localStorage.getItem('refresh_token');
   }
+
+  // Forgot Password method
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${environment.apiUrl}/Users/forgot-password`,
+      { email: email.trim().toLowerCase() }
+    );
+  }
+
+  // Reset Password method
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(
+      `${environment.apiUrl}/Users/reset-password`,
+      { 
+        token: token,
+        newPassword: newPassword 
+      }
+    );
+  }
 }

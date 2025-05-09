@@ -27,7 +27,7 @@ export class BookDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private bookDetailService: BookDetailService,
     private router: Router,
-    private wishlistService: WishlistService // New service
+    private wishlistService: WishlistService, // New service
   ) {}
 
   ngOnInit(): void {
@@ -111,6 +111,7 @@ export class BookDetailComponent implements OnInit {
             reviewCount: 20,
             currentPrice: 1500,
             originalPrice: 2000,
+            inStock: true,
             description:
               "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut",
           })
@@ -119,22 +120,30 @@ export class BookDetailComponent implements OnInit {
       .subscribe((data) => {
         console.log("Data received from backend:", data)
 
-        // Map API response to frontend model
+        // Map API response to frontend model with fallback values
         this.book = {
           id: data.id,
-          title: data.bookName || data.title,
-          author: data.author,
-          imageUrl: data.bookImage || "assets/images/Image 11@2x.png",
+          title: data.bookName || data.title || "Unknown Title",
+          author: data.author || "Unknown Author",
+          // Use fallback image if API image is missing or invalid
+          imageUrl: data.bookImage && data.bookImage.trim() !== "" ? data.bookImage : "assets/images/Image 11@2x.png",
           rating: data.rating || 4.5,
           reviewCount: data.reviewCount || 0,
-          currentPrice: data.price || data.currentPrice,
-          originalPrice: data.discountPrice || data.originalPrice,
-          description: data.description,
+          currentPrice: data.price || data.currentPrice || 0,
+          originalPrice: data.discountPrice || data.originalPrice || 0,
+          // Add stock status based on quantity
+          inStock: data.quantity > 0,
+          description: data.description || "No description available",
         }
 
         console.log("Mapped book data:", this.book)
         this.isLoading = false
       })
+  }
+
+  // Add image error handler method
+  handleImageError(event: any): void {
+    event.target.src = "assets/images/Image 11@2x.png" // Fallback image
   }
 
   addToCart(): void {
@@ -150,7 +159,7 @@ export class BookDetailComponent implements OnInit {
       },
       error: (error) => {
         console.error("Error adding to wishlist:", error)
-      }
+      },
     })
   }
 

@@ -16,7 +16,9 @@ import { OrderConfirmationComponent } from './order-confirmation/order-confirmat
 import { AuthInterceptor } from './services/auth.interceptor';
 import { BookDetailService } from './services/book-detail.service';
 import { WishlistService } from './services/wishlist.service';
-import { WishlistComponent } from './wishlist/wishlist.component'; // New import
+import { WishlistComponent } from './wishlist/wishlist.component';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component'; // New import
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { WishlistComponent } from './wishlist/wishlist.component'; // New import
     AddressDetailsComponent,
     OrderSummaryComponent,  // OrderSummaryComponent ko declarations se imports mein move kiya
     OrderConfirmationComponent,  // OrderConfirmationComponent ko imports mein add kiya
-    WishlistComponent // WishlistComponent ko declarations se imports mein move kiya
+    WishlistComponent, // WishlistComponent ko declarations se imports mein move kiya
+    ForgotPasswordComponent, // Standalone component ko import kiya
+    ResetPasswordComponent // Standalone component ko import kiya
   ],
   providers: [
     // Auth interceptor for adding JWT token to requests

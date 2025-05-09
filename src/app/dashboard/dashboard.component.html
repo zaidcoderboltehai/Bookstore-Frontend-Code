@@ -126,23 +126,25 @@
     <div class="books-grid">
       <div class="book-card" *ngFor="let book of books" (click)="navigateToBookDetail(book.id)">
         <div class="book-image">
-          <img [src]="book.imageUrl" [alt]="book.title">
+          <img [src]="book.imageUrl || 'assets/images/Image 11@2x.png'" 
+               [alt]="book.title"
+               (error)="handleImageError($event)">
           <div class="out-of-stock" *ngIf="!book.inStock">OUT OF STOCK</div>
         </div>
         <div class="book-details">
-          <h3 class="book-title">{{ book.title }}</h3>
-          <p class="book-author">by {{ book.author }}</p>
+          <h3 class="book-title">{{ book.title || 'Unknown Title' }}</h3>
+          <p class="book-author">by {{ book.author || 'Unknown Author' }}</p>
           <div class="book-rating">
             <div class="stars">
               <span *ngFor="let star of getStars(book.rating)" class="star" 
                     [class.filled]="star === 1" 
                     [class.half-filled]="star === 0.5">★</span>
             </div>
-            <span class="review-count">({{ book.reviewCount }})</span>
+            <span class="review-count">({{ book.reviewCount || 0 }})</span>
           </div>
           <div class="book-price">
-            <span class="current-price">Rs. {{ book.currentPrice }}</span>
-            <span class="original-price">Rs. {{ book.originalPrice }}</span>
+            <span class="current-price">Rs. {{ book.currentPrice || 0 }}</span>
+            <span class="original-price">Rs. {{ book.originalPrice || 0 }}</span>
           </div>
         </div>
       </div>

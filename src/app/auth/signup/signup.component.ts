@@ -30,8 +30,8 @@ export class SignupComponent {
   ) {
     // Form validation with password match
     this.signupForm = this.fb.group({
-      firstName: ["", [Validators.required]],
-      lastName: ["", [Validators.required]],
+      firstName: ["", [Validators.required, Validators.minLength(2)]],
+      lastName: ["", [Validators.required, Validators.minLength(2)]],
       email: ["", [Validators.required, Validators.email]],
       password: ["", [Validators.required, Validators.minLength(6)]],
       confirmPassword: ["", [Validators.required]]

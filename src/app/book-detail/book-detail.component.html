@@ -71,11 +71,15 @@
     <!-- Left Side - Book Images -->
     <div class="book-images">
       <div class="main-image">
-        <img [src]="book.imageUrl" [alt]="book.title">
+        <img [src]="book.imageUrl || 'assets/images/Image 11@2x.png'" 
+             [alt]="book.title"
+             (error)="handleImageError($event)">
       </div>
       <div class="thumbnail-images">
         <div class="thumbnail active">
-          <img [src]="book.imageUrl" [alt]="book.title">
+          <img [src]="book.imageUrl || 'assets/images/Image 11@2x.png'" 
+               [alt]="book.title"
+               (error)="handleImageError($event)">
         </div>
         <div class="thumbnail">
           <img src="assets/images/Image 7@2x.png" [alt]="book.title">
@@ -86,7 +90,7 @@
     <!-- Right Side - Book Info -->
     <div class="book-info">
       <h3 class="book-title">
-        {{ book.title }}
+        {{ book.title || 'Unknown Title' }}
         <small *ngIf="book.title === 'Don\'t Make Me Think' && !isLoading" style="color: red; font-size: 12px; margin-left: 10px;">
           (Fallback Data)
         </small>
@@ -94,29 +98,29 @@
           (API Data)
         </small>
       </h3>
-      <p class="book-author">by {{ book.author }}</p>
+      <p class="book-author">by {{ book.author || 'Unknown Author' }}</p>
       
       <!-- Rating -->
       <div class="book-rating">
-        <span class="rating-value">{{ book.rating }}</span>
+        <span class="rating-value">{{ book.rating || 0 }}</span>
         <div class="stars">
           <span *ngFor="let star of [1,2,3,4,5]" class="star" 
                 [class.filled]="star <= book.rating" 
                 [class.half-filled]="star - 0.5 === book.rating">★</span>
         </div>
-        <span class="review-count">({{ book.reviewCount }})</span>
+        <span class="review-count">({{ book.reviewCount || 0 }})</span>
       </div>
       
       <!-- Price -->
       <div class="book-price">
-        <span class="current-price">Rs.{{ book.currentPrice }}</span>
-        <span class="original-price">Rs.{{ book.originalPrice }}</span>
+        <span class="current-price">Rs.{{ book.currentPrice || 0 }}</span>
+        <span class="original-price">Rs.{{ book.originalPrice || 0 }}</span>
       </div>
       
       <!-- Book Detail -->
       <div class="book-detail-section">
         <h3>Book Detail</h3>
-        <p class="book-description">{{ book.description }}</p>
+        <p class="book-description">{{ book.description || 'No description available' }}</p>
       </div>
       
       <!-- Action Buttons - REPLACED WITH NEW COMPONENT -->
@@ -124,7 +128,8 @@
         [bookId]="book.id"
         [bookTitle]="book.title"
         [bookPrice]="book.currentPrice"
-        [bookImage]="book.imageUrl">
+        [bookImage]="book.imageUrl"
+        [inStock]="book.inStock">
       </app-book-detail-quantity>
       
       <!-- Customer Feedback -->

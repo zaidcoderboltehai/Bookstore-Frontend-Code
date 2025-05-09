@@ -170,6 +170,11 @@ export class DashboardComponent implements OnInit {
     this.loadBooks()
   }
 
+  // Add image error handler method
+  handleImageError(event: any): void {
+    event.target.src = "assets/images/Image 11@2x.png" // Fallback image
+  }
+
   // Add search functionality
   setupSearchListener(): void {
     setTimeout(() => {
@@ -203,7 +208,17 @@ export class DashboardComponent implements OnInit {
           console.log("Search results:", results)
           // Filter books based on search results
           if (results && results.books) {
-            this.books = results.books
+            this.books = results.books.map((book: any) => ({
+              ...book,
+              imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+              title: book.bookName || book.title || "Unknown Title",
+              author: book.author || "Unknown Author",
+              currentPrice: book.price || book.currentPrice || 0,
+              originalPrice: book.discountPrice || book.originalPrice || 0,
+              inStock: book.quantity > 0, // Add this line to set inStock based on quantity
+              rating: book.rating || 4.5,
+              reviewCount: book.reviewCount || 0,
+            }))
             this.totalItems = results.books.length
           } else {
             this.filterBooks(this.searchQuery)
@@ -318,7 +333,17 @@ export class DashboardComponent implements OnInit {
           next: (results) => {
             console.log("Sorted books (low to high):", results)
             if (results && results.books) {
-              this.books = results.books
+              this.books = results.books.map((book: any) => ({
+                ...book,
+                imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+                title: book.bookName || book.title || "Unknown Title",
+                author: book.author || "Unknown Author",
+                currentPrice: book.price || book.currentPrice || 0,
+                originalPrice: book.discountPrice || book.originalPrice || 0,
+                inStock: book.quantity > 0, // Yeh line important hai - quantity check karke inStock set karta hai
+                rating: book.rating || 4.5,
+                reviewCount: book.reviewCount || 0,
+              }))
             } else {
               // Fallback to client-side sorting (original behavior)
               this.books.sort((a, b) => a.currentPrice - b.currentPrice)
@@ -338,7 +363,17 @@ export class DashboardComponent implements OnInit {
           next: (results) => {
             console.log("Sorted books (high to low):", results)
             if (results && results.books) {
-              this.books = results.books
+              this.books = results.books.map((book: any) => ({
+                ...book,
+                imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+                title: book.bookName || book.title || "Unknown Title",
+                author: book.author || "Unknown Author",
+                currentPrice: book.price || book.currentPrice || 0,
+                originalPrice: book.discountPrice || book.originalPrice || 0,
+                inStock: book.quantity > 0, // Yeh line important hai - quantity check karke inStock set karta hai
+                rating: book.rating || 4.5,
+                reviewCount: book.reviewCount || 0,
+              }))
             } else {
               // Fallback to client-side sorting (original behavior)
               this.books.sort((a, b) => b.currentPrice - a.currentPrice)
@@ -358,7 +393,17 @@ export class DashboardComponent implements OnInit {
           next: (results) => {
             console.log("Recent books:", results)
             if (results && results.books) {
-              this.books = results.books
+              this.books = results.books.map((book: any) => ({
+                ...book,
+                imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+                title: book.bookName || book.title || "Unknown Title",
+                author: book.author || "Unknown Author",
+                currentPrice: book.price || book.currentPrice || 0,
+                originalPrice: book.discountPrice || book.originalPrice || 0,
+                inStock: book.quantity > 0, // Yeh line important hai - quantity check karke inStock set karta hai
+                rating: book.rating || 4.5,
+                reviewCount: book.reviewCount || 0,
+              }))
             } else {
               // Fallback to client-side sorting (original behavior)
               this.books.reverse()
@@ -387,18 +432,38 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Add the loadBooks method after the applySorting method
+  // Update the loadBooks method to handle stock status
   loadBooks(): void {
     const bookService = this.injector.get(BookService)
     bookService.getBooks().subscribe({
       next: (data: any) => {
         if (Array.isArray(data)) {
-          this.books = data
-          this.allBooks = [...data]
+          this.books = data.map((book: any) => ({
+            ...book,
+            imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+            title: book.bookName || book.title || "Unknown Title",
+            author: book.author || "Unknown Author",
+            currentPrice: book.price || book.currentPrice || 0,
+            originalPrice: book.discountPrice || book.originalPrice || 0,
+            inStock: book.quantity > 0, // Yeh line important hai
+            rating: book.rating || 4.5,
+            reviewCount: book.reviewCount || 0,
+          }))
+          this.allBooks = [...this.books]
           this.totalItems = data.length
         } else if (data && Array.isArray(data.books)) {
-          this.books = data.books
-          this.allBooks = [...data.books]
+          this.books = data.books.map((book: any) => ({
+            ...book,
+            imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+            title: book.bookName || book.title || "Unknown Title",
+            author: book.author || "Unknown Author",
+            currentPrice: book.price || book.currentPrice || 0,
+            originalPrice: book.discountPrice || book.originalPrice || 0,
+            inStock: book.quantity > 0, // Yeh line important hai
+            rating: book.rating || 4.5,
+            reviewCount: book.reviewCount || 0,
+          }))
+          this.allBooks = [...this.books]
           this.totalItems = data.books.length
         } else {
           console.warn("Unexpected data format from API:", data)
@@ -461,7 +526,17 @@ export class DashboardComponent implements OnInit {
       next: (data: any) => {
         console.log("Paged books:", data)
         if (data && Array.isArray(data.books)) {
-          this.books = data.books
+          this.books = data.books.map((book: any) => ({
+            ...book,
+            imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+            title: book.bookName || book.title || "Unknown Title",
+            author: book.author || "Unknown Author",
+            currentPrice: book.price || book.currentPrice || 0,
+            originalPrice: book.discountPrice || book.originalPrice || 0,
+            inStock: book.quantity > 0, // Yeh line important hai - quantity check karke inStock set karta hai
+            rating: book.rating || 4.5,
+            reviewCount: book.reviewCount || 0,
+          }))
           this.totalItems = data.totalItems || data.books.length
           this.currentPage = data.currentPage || pageNumber
         } else {
@@ -490,5 +565,21 @@ export class DashboardComponent implements OnInit {
 
   navigateToBookDetail(bookId: number): void {
     this.router.navigate(["/book", bookId])
+  }
+
+  updateCartItemQuantity(cartItemId: number, newQuantity: number): void {
+    if (newQuantity < 1) return
+    const bookService = this.injector.get(BookService)
+    bookService.updateCartItemQuantity(cartItemId, newQuantity).subscribe({
+      next: (response) => {
+        console.log("Cart item updated:", response)
+        // You might want to show a success message here
+      },
+      error: (error) => {
+        console.error("Error updating cart item:", error)
+        // Handle the error - show a message to the user
+        alert("Failed to update quantity. Please try again.")
+      },
+    })
   }
 }

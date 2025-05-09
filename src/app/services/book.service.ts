@@ -51,4 +51,23 @@ export class BookService {
   deleteBook(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/api/Books/${id}`)
   }
+
+  // Cart related methods
+  addToCart(bookId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/Cart/${bookId}`, {})
+  }
+
+  getCartItems(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/Cart`)
+  }
+
+  removeFromCart(cartItemId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/Cart/${cartItemId}`)
+  }
+
+  // Add this method to handle cart item quantity updates
+  updateCartItemQuantity(cartItemId: number, quantity: number): Observable<any> {
+    // Send proper payload format with quantity property
+    return this.http.put<any>(`${this.apiUrl}/api/Cart/${cartItemId}`, { quantity: quantity })
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterModule, Router } from "@angular/router"
 import { CartService, CartItem } from "../services/cart.service"
@@ -13,10 +13,10 @@ import { AddressDetailsComponent } from "../address-details/address-details.comp
 })
 export class CartComponent implements OnInit {
   cartItems: CartItem[] = []
-  // showAddressDetails = false; // Remove this line
   searchQuery = ""
   isLoading = false
   errorMessage = ""
+  successMessage = ""
 
   constructor(
     private cartService: CartService,
@@ -78,6 +78,8 @@ export class CartComponent implements OnInit {
 
   fetchCartFromApi(): void {
     this.isLoading = true
+    this.errorMessage = ""
+
     this.cartService.fetchCartFromApi().subscribe({
       next: () => {
         this.isLoading = false
@@ -91,18 +93,71 @@ export class CartComponent implements OnInit {
     })
   }
 
+  // Add image error handler method
+  handleImageError(event: any): void {
+    event.target.src = "assets/images/Image 11@2x.png" // Fallback image
+  }
+
   decreaseQuantity(item: CartItem): void {
     if (item.quantity > 1) {
-      this.cartService.updateItemQuantity(item.id, item.quantity - 1)
+      // Validate quantity before calling the service
+      if (item.quantity - 1 < 1) {
+        this.errorMessage = "Quantity must be at least 1"
+        return
+      }
+
+      this.isLoading = true
+      this.errorMessage = ""
+
+      this.cartService.updateItemQuantity(item.id, item.quantity - 1).subscribe({
+        next: () => {
+          this.isLoading = false
+          this.errorMessage = ""
+        },
+        error: (error) => {
+          console.error("Error decreasing quantity:", error)
+          this.errorMessage = error.message || "Failed to update quantity"
+          this.isLoading = false
+          // Reset to previous quantity in UI
+          this.cartService.fetchCartFromApi().subscribe()
+        },
+      })
     }
   }
 
   increaseQuantity(item: CartItem): void {
-    this.cartService.updateItemQuantity(item.id, item.quantity + 1)
+    this.isLoading = true
+    this.errorMessage = ""
+
+    this.cartService.updateItemQuantity(item.id, item.quantity + 1).subscribe({
+      next: () => {
+        this.isLoading = false
+        this.errorMessage = ""
+      },
+      error: (error) => {
+        console.error("Error increasing quantity:", error)
+        this.errorMessage = error.message || "Failed to update quantity"
+        this.isLoading = false
+        // Reset to previous quantity in UI
+        this.cartService.fetchCartFromApi().subscribe()
+      },
+    })
   }
 
   removeItem(itemId: number): void {
-    this.cartService.removeFromCart(itemId)
+    this.isLoading = true
+    this.errorMessage = ""
+
+    this.cartService.removeFromCart(itemId).subscribe({
+      next: () => {
+        this.isLoading = false
+      },
+      error: (error) => {
+        console.error("Error removing item:", error)
+        this.errorMessage = "Failed to remove item. Please try again."
+        this.isLoading = false
+      },
+    })
   }
 
   getTotal(): number {
@@ -110,23 +165,15 @@ export class CartComponent implements OnInit {
   }
 
   placeOrder(): void {
+    if (this.cartItems.length === 0) {
+      this.errorMessage = "Your cart is empty. Please add items before placing an order."
+      return
+    }
+
     console.log("Placing order for items:", this.cartItems)
 
-    // Try to use the API to purchase cart
-    this.isLoading = true
-    this.cartService.purchaseCart().subscribe({
-      next: (response) => {
-        console.log("Order placed successfully:", response)
-        this.isLoading = false
-        // No need to toggle address details visibility since it's always visible
-        // this.showAddressDetails = true;
-      },
-      error: (error) => {
-        console.error("Error placing order:", error)
-        this.errorMessage = "Could not place order with server. Continuing with local flow."
-        this.isLoading = false
-        // Continue with local flow in case of error
-      },
-    })
+    // Instead of purchasing the cart here, we'll just show the address details
+    // The actual purchase will happen in the address-details component
+    // after the order is created
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { WishlistService, WishlistItem } from '../services/wishlist.service';
+import { CartService } from '../services/cart.service';  // इसे इम्पोर्ट करें
 
 @Component({
   selector: 'app-wishlist',
@@ -351,7 +352,10 @@ export class WishlistComponent implements OnInit {
   wishlistItems: WishlistItem[] = [];
   isLoading = false;
 
-  constructor(private wishlistService: WishlistService) { }
+  constructor(
+    private wishlistService: WishlistService,
+    private cartService: CartService
+  ) { }
 
   ngOnInit(): void {
     this.loadWishlist();
@@ -379,7 +383,22 @@ export class WishlistComponent implements OnInit {
   }
 
   addToCart(item: WishlistItem): void {
-    // Implement add to cart functionality
-    console.log('Adding to cart:', item);
+    this.isLoading = true;
+    
+    // CartService का उपयोग करके आइटम को कार्ट में जोड़ें
+    this.cartService.addToCart(item.bookId).subscribe({
+      next: () => {
+        console.log('Successfully added to cart:', item);
+        this.isLoading = false;
+        // Optional: Show success message
+        alert(`"${item.bookName}" has been added to your cart!`);
+      },
+      error: (error) => {
+        console.error('Error adding to cart:', error);
+        this.isLoading = false;
+        // Optional: Show error message
+        alert('Failed to add item to cart. Please try again.');
+      }
+    });
   }
 }
