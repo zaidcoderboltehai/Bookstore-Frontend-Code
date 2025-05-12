@@ -165,6 +165,7 @@ export class BookDetailQuantityComponent implements OnInit {
   isInWishlist = false
   isLoading = false
   alreadyPurchased = false
+  errorMessage = "" // Add error message property
 
   constructor(
     private cartService: CartService,
@@ -190,6 +191,9 @@ export class BookDetailQuantityComponent implements OnInit {
 
   addToBag(): void {
     this.isLoading = true
+    this.showQuantity = true // Immediately show quantity selector
+    this.quantity = 1 // Set initial quantity to 1
+    this.updateCartBadge(this.quantity) // Update cart badge with the quantity
     this.cartService.addToCart(this.bookId).subscribe({
       next: () => {
         this.isLoading = false
@@ -198,30 +202,95 @@ export class BookDetailQuantityComponent implements OnInit {
         this.isLoading = false
         if (err.message === "This book is already purchased.") {
           this.alreadyPurchased = true
+          this.showQuantity = false // Hide quantity selector if already purchased
         }
       },
     })
   }
 
   increaseQuantity(): void {
-    this.quantity++
-    this.cartService.updateItemQuantity(this.bookId, this.quantity).subscribe({
-      next: () => {},
-      error: () => {
-        this.quantity--
-      },
-    })
+    if (this.isLoading) return
+
+    // Log the current state
+    console.log(`Increasing quantity for book ${this.bookId} from ${this.quantity} to ${this.quantity + 1}`)
+
+    // Get the cart items to find the correct cart item ID
+    const cartItems = this.cartService.getCartItems()
+    const cartItem = cartItems.find((item) => item.bookId === this.bookId)
+
+    if (cartItem) {
+      console.log(`Found cart item with ID ${cartItem.id} for book ${this.bookId}`)
+
+      // Call API to update quantity
+      this.isLoading = true
+      this.errorMessage = "" // Clear any previous error messages
+
+      const newQuantity = this.quantity + 1
+      const cartItemId = cartItem.id
+
+      console.log(`Calling updateItemQuantity with cartItemId: ${cartItemId}, quantity: ${newQuantity}`)
+
+      // Use the cart item ID instead of the book ID
+      this.cartService.updateItemQuantity(cartItemId, newQuantity).subscribe({
+        next: () => {
+          // Only update local quantity after successful API call
+          this.quantity = newQuantity
+          this.updateCartBadge(this.cartService.getCartItemCount())
+          this.isLoading = false
+        },
+        error: (err) => {
+          console.error("Error increasing quantity:", err)
+          this.isLoading = false
+          this.errorMessage = "Failed to update quantity. Please try again." // Set error message
+          // Don't update UI on error
+        },
+      })
+    } else {
+      console.error(`No cart item found for book ${this.bookId}`)
+    }
   }
 
   decreaseQuantity(): void {
+    if (this.isLoading) return
+
     if (this.quantity > 1) {
-      this.quantity--
-      this.cartService.updateItemQuantity(this.bookId, this.quantity).subscribe({
-        next: () => {},
-        error: () => {
-          this.quantity++
-        },
-      })
+      // Log the current state
+      console.log(`Decreasing quantity for book ${this.bookId} from ${this.quantity} to ${this.quantity - 1}`)
+
+      // Get the cart items to find the correct cart item ID
+      const cartItems = this.cartService.getCartItems()
+      const cartItem = cartItems.find((item) => item.bookId === this.bookId)
+
+      if (cartItem) {
+        console.log(`Found cart item with ID ${cartItem.id} for book ${this.bookId}`)
+
+        // Call API to update quantity
+        this.isLoading = true
+        this.errorMessage = "" // Clear any previous error messages
+
+        const newQuantity = this.quantity - 1
+        const cartItemId = cartItem.id
+
+        console.log(`Calling updateItemQuantity with cartItemId: ${cartItemId}, quantity: ${newQuantity}`)
+
+        // Use the cart item ID instead of the book ID
+        this.cartService.updateItemQuantity(cartItemId, newQuantity).subscribe({
+          next: () => {
+            // Only update local quantity after successful API call
+            this.quantity = newQuantity
+            this.updateCartBadge(this.cartService.getCartItemCount())
+            this.isLoading = false
+          },
+          error: (err) => {
+            console.error("Error decreasing quantity:", err)
+            this.isLoading = false
+            this.errorMessage = "Failed to update quantity. Please try again." // Set error message
+            // Don't update UI on error
+          },
+        })
+      } else {
+        console.error(`No cart item found for book ${this.bookId}`)
+      }
     } else {
       this.showQuantity = false
       this.quantity = 1

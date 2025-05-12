@@ -22,6 +22,7 @@ export class CartService {
   private apiUrl = environment.apiUrl
 
   cartItems$ = this.cartItemsSubject.asObservable()
+  cartItemCount = new BehaviorSubject<number>(0)
 
   constructor(private http: HttpClient) {
     // Local storage se cart data load karna
@@ -116,7 +117,7 @@ export class CartService {
     }
   }
 
-  // Update item quantity - FIXED to send proper payload and validate minimum quantity
+  // Update item quantity - FIXED to send the quantity directly as the backend expects
   updateItemQuantity(itemId: number, quantity: number): Observable<any> {
     console.log(`Updating cart item ${itemId} to quantity ${quantity}`)
 
@@ -126,30 +127,32 @@ export class CartService {
       return throwError(() => new Error("Quantity must be at least 1"))
     }
 
-    // First update local state for immediate UI feedback
-    const currentItems = this.cartItemsSubject.value
-    const updatedItems = currentItems.map((item) =>
-      item.id === itemId || item.bookId === itemId ? { ...item, quantity } : item,
-    )
-    this.cartItemsSubject.next(updatedItems)
-    this.cartItems = updatedItems
-    this.saveCartToStorage()
+    // Log the exact request being sent
+    console.log(`Sending PUT request to ${this.apiUrl}/api/Cart/${itemId}`)
+    console.log("Request payload:", quantity)
 
-    // Then send API request with proper payload format
-    const payload = { quantity: quantity }
+    // Send the quantity directly as the body (not as an object)
     const token = localStorage.getItem("bookstore_token")
     const headers = new HttpHeaders({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     })
 
-    // Find the actual cart item ID (not bookId)
-    const cartItem = currentItems.find((item) => item.bookId === itemId || item.id === itemId)
-    const cartItemId = cartItem ? cartItem.id : itemId
-
-    return this.http
-      .put<any>(`${this.apiUrl}/api/Cart/${cartItemId}`, payload, { headers })
-      .pipe(catchError(this.handleError))
+    return this.http.put<any>(`${this.apiUrl}/api/Cart/${itemId}`, quantity, { headers }).pipe(
+      tap((response) => {
+        console.log("API response:", response)
+        // Update local state after successful API call
+        const currentItems = this.cartItemsSubject.value
+        const updatedItems = currentItems.map((item) => (item.id === itemId ? { ...item, quantity } : item))
+        this.cartItemsSubject.next(updatedItems)
+        this.cartItems = updatedItems
+        this.saveCartToStorage()
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error("API error response:", error)
+        return this.handleError(error)
+      }),
+    )
   }
 
   removeFromCart(itemId: number): Observable<any> {

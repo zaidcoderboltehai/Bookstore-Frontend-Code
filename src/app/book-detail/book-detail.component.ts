@@ -89,6 +89,7 @@ export class BookDetailComponent implements OnInit {
     }
   }
 
+  // loadBookDetails मेथड को अपडेट करें ताकि वह भी सही तरीके से डेटा मैप करे
   loadBookDetails(bookId: number): void {
     this.isLoading = true
 
@@ -124,7 +125,7 @@ export class BookDetailComponent implements OnInit {
         this.book = {
           id: data.id,
           title: data.bookName || data.title || "Unknown Title",
-          author: data.author || "Unknown Author",
+          author: data.author || data.bookAuthor || "Unknown Author", // Added bookAuthor fallback
           // Use fallback image if API image is missing or invalid
           imageUrl: data.bookImage && data.bookImage.trim() !== "" ? data.bookImage : "assets/images/Image 11@2x.png",
           rating: data.rating || 4.5,
@@ -132,7 +133,7 @@ export class BookDetailComponent implements OnInit {
           currentPrice: data.price || data.currentPrice || 0,
           originalPrice: data.discountPrice || data.originalPrice || 0,
           // Add stock status based on quantity
-          inStock: data.quantity > 0,
+          inStock: data.quantity === undefined ? true : data.quantity > 0,
           description: data.description || "No description available",
         }
 
