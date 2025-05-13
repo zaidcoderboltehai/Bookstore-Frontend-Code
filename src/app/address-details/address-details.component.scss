@@ -176,3 +176,66 @@
     gap: 10px;
   }
 }
+
+// Mobile responsiveness improvements for address details
+@media (max-width: 480px) {
+  .address-details-content {
+    padding: 10px;
+    max-width: 100%;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    padding: 10px 0;
+  }
+  
+  .add-new-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .address-item {
+    padding: 10px;
+  }
+  
+  .address-type {
+    flex-wrap: wrap;
+    
+    .type-name {
+      font-size: 13px;
+    }
+    
+    .edit-btn {
+      margin-left: auto;
+      font-size: 11px;
+    }
+  }
+  
+  .address-meta-fields {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .form-group {
+    margin-bottom: 10px;
+    
+    label {
+      font-size: 11px;
+    }
+    
+    input, textarea {
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+  }
+  
+  .continue-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .edit-actions button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}

@@ -78,3 +78,47 @@
     }
   }
 }
+
+// Mobile responsiveness improvements for order summary
+@media (max-width: 480px) {
+  .order-summary-content {
+    border-radius: 3px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    padding: 12px 15px;
+  }
+  
+  .order-item {
+    padding: 15px;
+    
+    .item-image {
+      width: 60px;
+      height: 80px;
+    }
+    
+    .item-details {
+      .item-title {
+        font-size: 14px;
+      }
+      
+      .item-author {
+        font-size: 12px;
+      }
+      
+      .item-price {
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .checkout-action {
+    padding: 15px;
+    
+    .checkout-btn {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+  }
+}

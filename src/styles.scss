@@ -364,3 +364,102 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Small Mobile Devices Responsiveness (480px and below) */
+@media (max-width: 480px) {
+  /* Auth styles for very small screens */
+  .auth-container {
+    padding: 10px;
+  }
+  
+  .auth-card {
+    max-width: 100%;
+  }
+  
+  .auth-image {
+    padding: 15px;
+  }
+  
+  .auth-image img {
+    max-width: 120px;
+  }
+  
+  .auth-form {
+    padding: 15px;
+  }
+  
+  .auth-tab {
+    padding: 8px 10px;
+    font-size: 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+  }
+  
+  .form-control {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  /* Dashboard styles for very small screens */
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .dashboard-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .book-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .book-card {
+    margin-bottom: 15px;
+  }
+  
+  .book-image {
+    height: 180px;
+  }
+  
+  .book-details {
+    padding: 10px;
+  }
+  
+  .book-title {
+    font-size: 14px;
+  }
+  
+  .book-author {
+    font-size: 12px;
+  }
+  
+  .book-price {
+    font-size: 16px;
+  }
+  
+  /* Utility adjustments for very small screens */
+  .mb-3 {
+    margin-bottom: 10px;
+  }
+  
+  .mb-4 {
+    margin-bottom: 15px;
+  }
+  
+  .p-3 {
+    padding: 10px;
+  }
+}

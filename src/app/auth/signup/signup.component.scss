@@ -183,3 +183,54 @@
     box-shadow: none;
   }
 }
+
+// Mobile responsiveness improvements for signup
+@media (max-width: 480px) {
+  .auth-card {
+    width: 95%;
+    max-width: 95%;
+  }
+  
+  .auth-image {
+    padding: 15px;
+    
+    img {
+      max-width: 120px;
+    }
+    
+    h2 {
+      font-size: 16px;
+    }
+  }
+  
+  .auth-form {
+    padding: 15px;
+    
+    .auth-tabs {
+      margin-bottom: 20px;
+      
+      .auth-tab {
+        padding: 8px 0;
+        font-size: 14px;
+      }
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+      
+      label {
+        font-size: 13px;
+      }
+      
+      .form-control {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
+    
+    .btn {
+      padding: 10px;
+      font-size: 14px;
+    }
+  }
+}

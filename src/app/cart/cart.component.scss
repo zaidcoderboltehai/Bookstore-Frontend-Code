@@ -354,3 +354,64 @@ $border-color: #e0e0e0;
     justify-content: center;
   }
 }
+
+// Mobile responsiveness improvements for cart
+@media (max-width: 480px) {
+  .cart-item {
+    flex-direction: column;
+    
+    .item-image {
+      width: 100%;
+      height: 150px;
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+    
+    .item-details {
+      padding: 0;
+      
+      .item-title {
+        font-size: 14px;
+      }
+      
+      .item-author {
+        font-size: 12px;
+      }
+      
+      .item-price {
+        font-size: 14px;
+      }
+      
+      .item-quantity {
+        flex-wrap: wrap;
+        
+        .quantity-btn {
+          width: 25px;
+          height: 25px;
+        }
+        
+        .remove-btn {
+          margin-top: 10px;
+          margin-left: 0;
+          width: 100%;
+          text-align: center;
+          padding: 5px;
+        }
+      }
+    }
+  }
+  
+  .order-actions {
+    padding: 15px;
+    
+    .place-order-btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+    }
+  }
+  
+  .summary-row {
+    font-size: 13px;
+  }
+}

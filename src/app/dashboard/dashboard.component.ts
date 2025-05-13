@@ -130,6 +130,8 @@ export class DashboardComponent implements OnInit {
   private authDialogRef?: MatDialogRef<LoginComponent>
   searchQuery = ""
   private injector: Injector
+  pageSize = 8 // 8 books per page
+  totalPages = 1 // Will be calculated based on total items
 
   constructor(
     private authService: AuthService,
@@ -147,6 +149,9 @@ export class DashboardComponent implements OnInit {
 
     // Store original books for filtering
     this.allBooks = [...this.books]
+
+    // Calculate total pages
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize)
 
     // Check for search query in URL
     this.route.queryParams.subscribe((params) => {
@@ -616,7 +621,9 @@ export class DashboardComponent implements OnInit {
   }
 
   changePage(page: number): void {
-    this.currentPage = Math.max(1, Math.min(page, 18))
+    if (page < 1 || page > this.totalPages) return
+
+    this.currentPage = page
     console.log("Page changed to:", this.currentPage)
 
     // Call the API to get paginated results
@@ -668,6 +675,8 @@ export class DashboardComponent implements OnInit {
     // Use all books for pagination if we have them
     if (this.allBooks && this.allBooks.length > 0) {
       this.books = this.allBooks.slice(startIndex, endIndex)
+      this.totalItems = this.allBooks.length
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize)
     }
   }
 
@@ -689,5 +698,26 @@ export class DashboardComponent implements OnInit {
         alert("Failed to update quantity. Please try again.")
       },
     })
+  }
+
+  getPaginationArray(): number[] {
+    const paginationArray: number[] = []
+    const totalPages = Math.ceil(this.totalItems / this.pageSize)
+    this.totalPages = totalPages
+
+    // Show maximum 5 page numbers
+    let startPage = Math.max(1, this.currentPage - 2)
+    const endPage = Math.min(totalPages, startPage + 4)
+
+    // Adjust if we're near the end
+    if (endPage - startPage < 4) {
+      startPage = Math.max(1, endPage - 4)
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      paginationArray.push(i)
+    }
+
+    return paginationArray
   }
 }

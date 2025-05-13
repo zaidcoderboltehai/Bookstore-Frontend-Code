@@ -455,3 +455,66 @@ $rating-color: #4caf50;
   text-align: center;
   font-size: 14px;
 }
+
+// Mobile responsiveness improvements for book detail
+@media (max-width: 480px) {
+  .book-detail-content {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .book-images {
+    padding-right: 0;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .main-image {
+    height: auto;
+    padding: 10px;
+  }
+  
+  .main-image img {
+    max-height: 250px;
+  }
+  
+  .thumbnail-images {
+    justify-content: center;
+  }
+  
+  .book-info .book-title {
+    font-size: 20px;
+  }
+  
+  .book-info .book-author {
+    font-size: 14px;
+  }
+  
+  .book-info .book-price .current-price {
+    font-size: 18px;
+  }
+  
+  .book-info .book-price .original-price {
+    font-size: 14px;
+  }
+  
+  .book-detail-section h3 {
+    font-size: 16px;
+  }
+  
+  .book-detail-section .book-description {
+    font-size: 13px;
+  }
+  
+  .customer-feedback h3 {
+    font-size: 16px;
+  }
+  
+  .rating-selection .rating-star {
+    font-size: 20px;
+  }
+  
+  .review-form .review-textarea {
+    height: 80px;
+  }
+}

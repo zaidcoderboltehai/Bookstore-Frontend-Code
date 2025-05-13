@@ -275,3 +275,41 @@
     font-size: 14px;
   }
 }
+
+// Mobile responsiveness improvements for order confirmation
+@media (max-width: 480px) {
+  .success-title {
+    font-size: 18px;
+  }
+  
+  .success-message {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  .contact-table {
+    font-size: 11px;
+    
+    th, td {
+      padding: 6px;
+    }
+  }
+  
+  .continue-shopping-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .celebration-graphics {
+    height: 100px;
+  }
+  
+  .star {
+    font-size: 20px;
+  }
+  
+  .confetti {
+    width: 8px;
+    height: 15px;
+  }
+}

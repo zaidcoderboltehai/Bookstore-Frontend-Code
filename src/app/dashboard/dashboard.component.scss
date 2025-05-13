@@ -734,3 +734,55 @@ html, body {
     }
   }
 }
+
+// Mobile responsiveness improvements for dashboard
+@media (max-width: 480px) {
+  .books-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+  }
+  
+  .book-card {
+    margin-bottom: 15px;
+  }
+  
+  .book-image {
+    height: 180px;
+  }
+  
+  .book-details {
+    padding: 10px;
+  }
+  
+  .book-title {
+    font-size: 14px;
+  }
+  
+  .book-author {
+    font-size: 12px;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .pagination-number {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+  
+  .pagination-arrow {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .books-header h1 {
+    font-size: 20px;
+  }
+  
+  .sort-container {
+    margin-top: 10px;
+  }
+}
