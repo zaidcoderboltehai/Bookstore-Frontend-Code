@@ -54,6 +54,11 @@ export const routes: Routes = [
       import("./wishlist/wishlist.component").then((m) => m.WishlistComponent),
     title: "My Wishlist - Bookstore",
   },
+  {
+    path: "my-orders",
+    loadComponent: () => import("./my-orders/my-orders.component").then((m) => m.MyOrdersComponent),
+    title: "My Orders - Bookstore",
+  },
   { 
     path: "", 
     redirectTo: "auth/login", 

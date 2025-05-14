@@ -1,0 +1,96 @@
+<div class="my-orders-container">
+  <!-- Header Section -->
+  <header class="header">
+    <div class="logo" style="cursor: pointer;" routerLink="/dashboard">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+          class="book-icon">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      </svg>
+      <span>Bookstore</span>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+          class="search-icon">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" placeholder="Search..." class="search-input">
+    </div>
+
+    <!-- User Actions -->
+    <div class="user-actions">
+      <a class="user-action" routerLink="/profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Poonam</span>
+      </a>
+
+      <a class="user-action" routerLink="/cart">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span>Cart</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb">
+    <a routerLink="/">Home</a> / <span>My Order</span>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading your orders...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-container">
+    <div class="order-item" *ngFor="let order of orders">
+      <div class="order-image">
+        <img [src]="order.imageUrl" [alt]="order.bookName" (error)="handleImageError($event)">
+      </div>
+      <div class="order-details">
+        <h3 class="order-title">{{ order.bookName }}</h3>
+        <p class="order-author">by {{ order.author }}</p>
+        <div class="order-price">
+          <span class="current-price">Rs. {{ order.price }}</span>
+          <span class="original-price" *ngIf="order.price < 2000">Rs. {{ 2000 }}</span>
+        </div>
+      </div>
+      <div class="order-status">
+        <span class="status-indicator">Order Placed on {{ order.formattedDate }}</span>
+      </div>
+    </div>
+
+    <!-- Empty Orders Message -->
+    <div class="empty-orders" *ngIf="orders.length === 0 && !isLoading">
+      <p>You haven't placed any orders yet</p>
+      <a routerLink="/dashboard" class="continue-shopping">Continue Shopping</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      Copyright © 2020, Bookstore Private Limited. All Rights Reserved
+    </div>
+  </footer>
+</div>

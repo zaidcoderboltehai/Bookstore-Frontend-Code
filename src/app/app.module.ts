@@ -18,17 +18,18 @@ import { BookDetailService } from './services/book-detail.service';
 import { WishlistService } from './services/wishlist.service';
 import { WishlistComponent } from './wishlist/wishlist.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './auth/reset-password/reset-password.component'; // New import
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
+import { MyOrdersComponent } from './my-orders/my-orders.component'; 
 
 @NgModule({
   declarations: [
-    // Standalone components ko yahan declare nahi karna hai
+    // Standalone components 
   ],
   imports: [
     // Angular modules
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule, // HTTP requests ke liye important
+    HttpClientModule,
     RouterModule,
     
     // Material Design modules
@@ -42,18 +43,17 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
     CartQuantityComponent,
     CartComponent,
     AddressDetailsComponent,
-    OrderSummaryComponent,  // OrderSummaryComponent ko declarations se imports mein move kiya
-    OrderConfirmationComponent,  // OrderConfirmationComponent ko imports mein add kiya
-    WishlistComponent, // WishlistComponent ko declarations se imports mein move kiya
-    ForgotPasswordComponent, // Standalone component ko import kiya
-    ResetPasswordComponent // Standalone component ko import kiya
+    OrderSummaryComponent,
+    OrderConfirmationComponent,
+    WishlistComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+    MyOrdersComponent 
   ],
   providers: [
-    // Auth interceptor for adding JWT token to requests
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    // Services
     BookDetailService,
-    WishlistService, // New service
+    WishlistService,
   ],
   bootstrap: [AppComponent]
 })

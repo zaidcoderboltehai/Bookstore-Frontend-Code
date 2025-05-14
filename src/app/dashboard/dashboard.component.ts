@@ -613,6 +613,7 @@ export class DashboardComponent implements OnInit {
 
   navigateToOrders(): void {
     console.log("Navigating to orders page")
+    this.router.navigate(["/my-orders"])
   }
 
   navigateToWishlist(): void {
