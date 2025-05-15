@@ -91,7 +91,7 @@
           </div>
           <div class="item-details">
             <h3 class="item-title">{{ item.title || 'Unknown Title' }}</h3>
-            <p class="item-author">by {{ item.title.includes('Think') ? 'Steve Krug' : 'Unknown Author' }}</p>
+            <p class="item-author">by {{ item.author || getAuthorByTitle(item.title) }}</p>
             <p class="item-price">Rs. {{ item.price || 0 }}</p>
             <div class="item-quantity">
               <button class="quantity-btn minus-btn" (click)="decreaseQuantity(item)">-</button>
@@ -115,24 +115,7 @@
       </div>
     </div>
 
-    <!-- Order Summary Section -->
-    <div class="cart-section">
-      <h2 class="section-title">Order summary</h2>
-      <div class="section-content" *ngIf="cartItems.length > 0">
-        <div class="summary-row">
-          <span>Items ({{ cartItems.length }}):</span>
-          <span>Rs. {{ getTotal() }}</span>
-        </div>
-        <div class="summary-row">
-          <span>Delivery:</span>
-          <span>Rs. 40</span>
-        </div>
-        <div class="summary-row total">
-          <span>Total:</span>
-          <span>Rs. {{ getTotal() + 40 }}</span>
-        </div>
-      </div>
-    </div>
+    <!-- Order Summary Section has been removed as it's now in address-details.component.html -->
   </div>
 
   <!-- Customer Details Section -->

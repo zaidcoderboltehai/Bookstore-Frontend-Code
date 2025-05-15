@@ -26,6 +26,16 @@ export class AddressDetailsComponent implements OnInit {
   showOrderConfirmation = false
   isLoading = false
   errorMessage = ""
+  
+  // Add these properties to fix the errors
+  orderDetails = {
+    title: "Don't Make Me Think",
+    author: "Steve Krug",
+    price: 1500,
+    imageUrl: "assets/images/Image 11@2x.png"
+  }
+  
+  cartItems: any[] = [] // Add this property to store cart items
 
   private apiUrl = environment.apiUrl + "/api/CustomerAddress"
 
@@ -57,6 +67,24 @@ export class AddressDetailsComponent implements OnInit {
   ngOnInit(): void {
     // Load addresses from API when component initializes
     this.loadAddresses()
+    
+    // Load cart items
+    this.loadCartItems()
+  }
+  
+  // Add this method to calculate total price
+  getTotal(): number {
+    return this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+  }
+  
+  // Add this method to load cart items
+  loadCartItems(): void {
+    this.cartService.cartItems$.subscribe((items) => {
+      this.cartItems = items
+    })
+
+    // Fetch cart from API
+    this.cartService.fetchCartFromApi().subscribe()
   }
 
   // API Integration: Load addresses from backend

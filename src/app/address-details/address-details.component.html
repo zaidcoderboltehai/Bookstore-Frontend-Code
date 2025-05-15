@@ -73,6 +73,40 @@
       <button class="continue-btn" (click)="continueToPayment()">CONTINUE</button>
     </div>
     
+    <!-- Combined Order Item and Summary Section -->
+    <!-- <div class="order-summary-block"> -->
+      <!-- Order Item Section -->
+      <!-- <div class="order-item">
+        <div class="item-image">
+          <img [src]="orderDetails.imageUrl" [alt]="orderDetails.title">
+        </div>
+        <div class="item-details">
+          <h3 class="item-title">{{ orderDetails.title }}</h3>
+          <p class="item-author">by {{ orderDetails.author }}</p>
+          <p class="item-price">Rs. {{ orderDetails.price }}</p>
+        </div>
+      </div> -->
+      
+      <!-- Order Summary Section -->
+      <!-- <div class="cart-section">
+        <h2 class="section-title">Order summary</h2>
+        <div class="section-content" *ngIf="cartItems.length > 0">
+          <div class="summary-row">
+            <span>Items ({{ cartItems.length }}):</span>
+            <span>Rs. {{ getTotal() }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery:</span>
+            <span>Rs. 40</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>Rs. {{ getTotal() + 40 }}</span>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    
     <!-- Order Summary Component -->
     <app-order-summary 
       [isVisible]="showOrderSummary"
