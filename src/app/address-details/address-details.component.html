@@ -1,7 +1,18 @@
 <div class="address-details-container" *ngIf="isVisible">
-  <div class="address-details-content">
+  <!-- Clickable section header -->
+  <div class="section-header" (click)="toggleCustomerDetails()">
     <h2 class="section-title">Customer Details</h2>
-    
+    <div class="toggle-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline *ngIf="!isCustomerDetailsExpanded" points="6 9 12 15 18 9"></polyline>
+        <polyline *ngIf="isCustomerDetailsExpanded" points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </div>
+  </div>
+  
+  <!-- Collapsible content -->
+  <div class="address-details-content" *ngIf="isCustomerDetailsExpanded">
     <!-- Test button (remove after testing) -->
     <button *ngIf="!showOrderConfirmation" 
             (click)="testOrderConfirmation()" 
@@ -106,24 +117,22 @@
         </div>
       </div>
     </div> -->
-    
-    <!-- Order Summary Component -->
-    <app-order-summary 
-      [isVisible]="showOrderSummary"
-      [orderDetails]="{
-        title: 'Don\'t Make Me Think',
-        author: 'Steve Krug',
-        price: 1500,
-        originalPrice: 2000,
-        imageUrl: 'assets/images/Image 11@2x.png'
-      }"
-      (checkout)="handleCheckout()"
-    ></app-order-summary>
   </div>
+  
+  <!-- Order Summary Component -->
+  <app-order-summary 
+    [isVisible]="showOrderSummary"
+    [orderDetails]="{
+      title: 'Don\'t Make Me Think',
+      author: 'Steve Krug',
+      price: 1500,
+      originalPrice: 2000,
+      imageUrl: 'assets/images/Image 11@2x.png'
+    }"
+    (checkout)="handleCheckout()"
+    (toggleSummary)="showOrderSummary = !showOrderSummary; isCustomerDetailsExpanded = !isCustomerDetailsExpanded;"
+  ></app-order-summary>
 </div>
-
-<!-- Order Confirmation Component -->
-<app-order-confirmation [isVisible]="showOrderConfirmation"></app-order-confirmation>
 
 <!-- Order Confirmation Component -->
 <app-order-confirmation [isVisible]="showOrderConfirmation"></app-order-confirmation>

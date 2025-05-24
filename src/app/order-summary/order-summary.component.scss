@@ -15,7 +15,7 @@
   font-size: 18px;
   font-weight: 500;
   padding: 15px 0;
-  margin: 0 0 15px 0;
+  margin: 0;
   color: #333;
 }
 
@@ -92,6 +92,21 @@
   }
 }
 
+/* Add styles for the new book quantity rows */
+.book-quantity-row {
+  padding: 8px 15px;
+  background-color: #f9f9f9;
+  font-size: 13px;
+
+  .summary-label {
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+}
+
 .checkout-action {
   text-align: center;
   margin-top: 20px;
@@ -110,6 +125,25 @@
   &:hover {
     background-color: darken(#b02a37, 10%);
   }
+}
+
+/* Add styles for the clickable section header and toggle icon */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.toggle-icon {
+  color: #777;
+  transition: transform 0.3s ease;
 }
 
 /* Responsive styles */

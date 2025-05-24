@@ -130,7 +130,7 @@ export class DashboardComponent implements OnInit {
   private authDialogRef?: MatDialogRef<LoginComponent>
   searchQuery = ""
   private injector: Injector
-  pageSize = 8 // 8 books per page
+  pageSize = 5 // CHANGED: Updated from 8 to 5 books per page
   totalPages = 1 // Will be calculated based on total items
 
   constructor(
@@ -150,7 +150,7 @@ export class DashboardComponent implements OnInit {
     // Store original books for filtering
     this.allBooks = [...this.books]
 
-    // Calculate total pages
+    // Calculate total pages based on new pageSize of 5
     this.totalPages = Math.ceil(this.totalItems / this.pageSize)
 
     // Check for search query in URL
@@ -215,9 +215,9 @@ export class DashboardComponent implements OnInit {
           // Filter books based on search results
           if (results && results.books) {
             // FIX: Properly map API response to Book interface with multiple fallbacks
-            this.books = results.books.map((book: any) => ({
+            this.books = results.books.map((book: any, index: number) => ({
               id: book.id,
-              imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+              imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
               title: book.bookName || book.title || "Unknown Title",
               author: book.author || book.bookAuthor || "Steve Krug", // Default to Steve Krug instead of Unknown Author
               // FIX: Ensure price values are numbers, not 0
@@ -230,6 +230,12 @@ export class DashboardComponent implements OnInit {
               quantity: book.quantity || 0, // Add quantity property
             }))
             this.totalItems = results.books.length
+            
+            // Recalculate total pages after search
+            this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+            // Reset to first page after search
+            this.currentPage = 1
           } else {
             this.filterBooks(this.searchQuery)
           }
@@ -278,6 +284,12 @@ export class DashboardComponent implements OnInit {
 
     // Update total items count
     this.totalItems = this.books.length
+    
+    // Recalculate total pages after filtering
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+    // Reset to first page after filtering
+    this.currentPage = 1
   }
 
   private checkAuthStatus(): void {
@@ -333,7 +345,6 @@ export class DashboardComponent implements OnInit {
     this.applySorting()
   }
 
-  // Replace the applySorting method with this updated version that forces author names and stock status
   applySorting(): void {
     const bookService = this.injector.get(BookService)
 
@@ -345,9 +356,7 @@ export class DashboardComponent implements OnInit {
             console.log("Sorted books (low to high):", results)
             if (results && results.books) {
               // Process the API response
-              this.books = results.books.map((book: any) => {
-                console.log("Processing book:", book) // Debug log
-
+              this.books = results.books.map((book: any, index: number) => {
                 // Determine author name based on title
                 let authorName = "Steve Krug" // Default author
                 if (book.title && book.title.includes("C#")) {
@@ -365,32 +374,56 @@ export class DashboardComponent implements OnInit {
 
                 return {
                   id: book.id,
-                  imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+                  // Use different default images based on index
+                  imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
                   title: book.bookName || book.title || "Unknown Title",
-                  // FORCE author name, never use Unknown Author
                   author: book.author && book.author !== "Unknown Author" ? book.author : authorName,
                   currentPrice: book.price || book.currentPrice || 1500,
                   originalPrice: book.discountPrice || book.originalPrice || 2000,
-                  // FORCE stock status based on quantity
                   inStock: isInStock,
                   rating: book.rating || 4.5,
                   reviewCount: book.reviewCount || 0,
-                  quantity: book.quantity || 1, // Default to 1 if missing
+                  quantity: book.quantity || 1,
                 }
               })
 
               // Client-side sorting to ensure correct order
               this.books.sort((a, b) => a.currentPrice - b.currentPrice)
+              
+              // IMPORTANT: Save the full sorted list to allBooks
+              this.allBooks = [...this.books]
+              
+              // Update total items and recalculate pages
+              this.totalItems = this.books.length
+              this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+              // Reset to first page after sorting
+              this.currentPage = 1
+
+              // Apply pagination to show only 5 books
+              this.clientSidePagination(this.currentPage)
             } else {
               console.warn("API returned empty or invalid data for price: low to high")
               // Fallback to client-side sorting (original behavior)
               this.books.sort((a, b) => a.currentPrice - b.currentPrice)
+              
+              // IMPORTANT: Save the full sorted list to allBooks
+              this.allBooks = [...this.books]
+              
+              // Apply pagination to show only 5 books
+              this.clientSidePagination(this.currentPage)
             }
           },
           error: (error) => {
             console.error("Sorting error:", error)
             // Fallback to client-side sorting (original behavior)
             this.books.sort((a, b) => a.currentPrice - b.currentPrice)
+            
+            // IMPORTANT: Save the full sorted list to allBooks
+            this.allBooks = [...this.books]
+            
+            // Apply pagination to show only 5 books
+            this.clientSidePagination(this.currentPage)
           },
         })
         break
@@ -402,9 +435,7 @@ export class DashboardComponent implements OnInit {
             console.log("Sorted books (high to low):", results)
             if (results && results.books) {
               // Process the API response
-              this.books = results.books.map((book: any) => {
-                console.log("Processing book:", book) // Debug log
-
+              this.books = results.books.map((book: any, index: number) => {
                 // Determine author name based on title
                 let authorName = "Steve Krug" // Default author
                 if (book.title && book.title.includes("C#")) {
@@ -422,31 +453,55 @@ export class DashboardComponent implements OnInit {
 
                 return {
                   id: book.id,
-                  imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+                  // Use different default images based on index
+                  imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
                   title: book.bookName || book.title || "Unknown Title",
-                  // FORCE author name, never use Unknown Author
                   author: book.author && book.author !== "Unknown Author" ? book.author : authorName,
                   currentPrice: book.price || book.currentPrice || 1500,
                   originalPrice: book.discountPrice || book.originalPrice || 2000,
-                  // FORCE stock status based on quantity
                   inStock: isInStock,
                   rating: book.rating || 4.5,
                   reviewCount: book.reviewCount || 0,
-                  quantity: book.quantity || 1, // Default to 1 if missing
+                  quantity: book.quantity || 1,
                 }
               })
 
               // Client-side sorting to ensure correct order
               this.books.sort((a, b) => b.currentPrice - a.currentPrice)
+              
+              // IMPORTANT: Save the full sorted list to allBooks
+              this.allBooks = [...this.books]
+              
+              // Update total items and recalculate pages
+              this.totalItems = this.books.length
+              this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+              // Reset to first page after sorting
+              this.currentPage = 1
+
+              // Apply pagination to show only 5 books
+              this.clientSidePagination(this.currentPage)
             } else {
               // Fallback to client-side sorting (original behavior)
               this.books.sort((a, b) => b.currentPrice - a.currentPrice)
+              
+              // IMPORTANT: Save the full sorted list to allBooks
+              this.allBooks = [...this.books]
+              
+              // Apply pagination to show only 5 books
+              this.clientSidePagination(this.currentPage)
             }
           },
           error: (error) => {
             console.error("Sorting error:", error)
             // Fallback to client-side sorting (original behavior)
             this.books.sort((a, b) => b.currentPrice - a.currentPrice)
+            
+            // IMPORTANT: Save the full sorted list to allBooks
+            this.allBooks = [...this.books]
+            
+            // Apply pagination to show only 5 books
+            this.clientSidePagination(this.currentPage)
           },
         })
         break
@@ -458,9 +513,7 @@ export class DashboardComponent implements OnInit {
             console.log("Recent books:", results)
             if (results && results.books) {
               // Process the API response
-              this.books = results.books.map((book: any) => {
-                console.log("Processing book:", book) // Debug log
-
+              this.books = results.books.map((book: any, index: number) => {
                 // Determine author name based on title
                 let authorName = "Steve Krug" // Default author
                 if (book.title && book.title.includes("C#")) {
@@ -478,28 +531,52 @@ export class DashboardComponent implements OnInit {
 
                 return {
                   id: book.id,
-                  imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+                  // Use different default images based on index
+                  imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
                   title: book.bookName || book.title || "Unknown Title",
-                  // FORCE author name, never use Unknown Author
                   author: book.author && book.author !== "Unknown Author" ? book.author : authorName,
                   currentPrice: book.price || book.currentPrice || 1500,
                   originalPrice: book.discountPrice || book.originalPrice || 2000,
-                  // FORCE stock status based on quantity
                   inStock: isInStock,
                   rating: book.rating || 4.5,
                   reviewCount: book.reviewCount || 0,
-                  quantity: book.quantity || 1, // Default to 1 if missing
+                  quantity: book.quantity || 1,
                 }
               })
+              
+              // IMPORTANT: Save the full sorted list to allBooks
+              this.allBooks = [...this.books]
+              
+              // Update total items and recalculate pages
+              this.totalItems = this.books.length
+              this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+              // Reset to first page after sorting
+              this.currentPage = 1
+
+              // Apply pagination to show only 5 books
+              this.clientSidePagination(this.currentPage)
             } else {
               // Fallback to client-side sorting (original behavior)
               this.books.reverse()
+              
+              // IMPORTANT: Save the full sorted list to allBooks
+              this.allBooks = [...this.books]
+              
+              // Apply pagination to show only 5 books
+              this.clientSidePagination(this.currentPage)
             }
           },
           error: (error) => {
             console.error("Recent books error:", error)
             // Fallback to client-side sorting (original behavior)
             this.books.reverse()
+            
+            // IMPORTANT: Save the full sorted list to allBooks
+            this.allBooks = [...this.books]
+            
+            // Apply pagination to show only 5 books
+            this.clientSidePagination(this.currentPage)
           },
         })
         break
@@ -514,8 +591,19 @@ export class DashboardComponent implements OnInit {
           )
         } else {
           // If no search query, just use the original order
-          this.books = [...this.allBooks]
+          this.loadBooks() // Reload books to get original order
+          return // Exit early to avoid double pagination
         }
+        
+        // Update total items and recalculate pages
+        this.totalItems = this.books.length
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+        // Reset to first page after sorting
+        this.currentPage = 1
+
+        // Apply pagination to show only 5 books
+        this.clientSidePagination(this.currentPage)
     }
   }
 
@@ -532,7 +620,6 @@ export class DashboardComponent implements OnInit {
     return "Steve Krug"
   }
 
-  // 2. loadBooks मेथड को भी अपडेट करें ताकि वह भी सही तरीके से डेटा मैप करे
   loadBooks(): void {
     const bookService = this.injector.get(BookService)
     bookService.getBooks().subscribe({
@@ -540,9 +627,10 @@ export class DashboardComponent implements OnInit {
         console.log("Books API response:", data) // Debug log
         if (Array.isArray(data)) {
           // FIX: Properly map API response to Book interface with multiple fallbacks
-          this.books = data.map((book: any) => ({
+          this.books = data.map((book: any, index: number) => ({
             id: book.id,
-            imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+            // Use different default images based on index to ensure variety
+            imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
             title: book.bookName || book.title || "Unknown Title",
             author: book.author || book.bookAuthor || this.getAuthorByTitle(book.bookName || book.title),
             // FIX: Ensure price values are numbers, not 0
@@ -556,11 +644,18 @@ export class DashboardComponent implements OnInit {
           }))
           this.allBooks = [...this.books]
           this.totalItems = data.length
+          
+          // Calculate total pages based on new pageSize of 5
+          this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+          // Apply pagination to show only first 5 books
+          this.clientSidePagination(this.currentPage)
         } else if (data && Array.isArray(data.books)) {
           // FIX: Properly map API response to Book interface with multiple fallbacks
-          this.books = data.books.map((book: any) => ({
+          this.books = data.books.map((book: any, index: number) => ({
             id: book.id,
-            imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+            // Use different default images based on index to ensure variety
+            imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
             title: book.bookName || book.title || "Unknown Title",
             author: book.author || book.bookAuthor || this.getAuthorByTitle(book.bookName || book.title),
             // FIX: Ensure price values are numbers, not 0
@@ -574,6 +669,12 @@ export class DashboardComponent implements OnInit {
           }))
           this.allBooks = [...this.books]
           this.totalItems = data.books.length
+          
+          // Calculate total pages based on new pageSize of 5
+          this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+          // Apply pagination to show only first 5 books
+          this.clientSidePagination(this.currentPage)
         } else {
           console.warn("Unexpected data format from API:", data)
         }
@@ -627,21 +728,23 @@ export class DashboardComponent implements OnInit {
     this.currentPage = page
     console.log("Page changed to:", this.currentPage)
 
-    // Call the API to get paginated results
+    // Call the API to get paginated results with pageSize=5
     this.loadPagedBooks(this.currentPage)
   }
 
-  // 3. loadPagedBooks मेथड को भी अपडेट करें
   loadPagedBooks(pageNumber: number): void {
     const bookService = this.injector.get(BookService)
-    bookService.getBooksByPage(pageNumber).subscribe({
+    
+    // UPDATED: Pass pageSize parameter to API
+    bookService.getBooksByPage(pageNumber, this.pageSize).subscribe({
       next: (data: any) => {
         console.log("Paged books:", data)
         if (data && Array.isArray(data.books)) {
           // FIX: Properly map API response to Book interface with multiple fallbacks
-          this.books = data.books.map((book: any) => ({
+          this.books = data.books.map((book: any, index: number) => ({
             id: book.id,
-            imageUrl: book.bookImage || "assets/images/Image 11@2x.png",
+            // Use different default images based on index to ensure variety
+            imageUrl: book.bookImage || `assets/images/Image ${7 + (index % 12)}@2x.png`,
             title: book.bookName || book.title || "Unknown Title",
             author: book.author || book.bookAuthor || this.getAuthorByTitle(book.bookName || book.title),
             // FIX: Ensure price values are numbers, not 0
@@ -655,8 +758,13 @@ export class DashboardComponent implements OnInit {
           }))
           this.totalItems = data.totalItems || data.books.length
           this.currentPage = data.currentPage || pageNumber
+          
+          // Recalculate total pages
+          this.totalPages = Math.ceil(this.totalItems / this.pageSize)
         } else {
           console.warn("Unexpected data format from API:", data)
+          // Fallback to client-side pagination
+          this.clientSidePagination(pageNumber)
         }
       },
       error: (error: any) => {
@@ -667,17 +775,24 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  // Add a method for client-side pagination as fallback
+  // UPDATED: Modified client-side pagination to show exactly 5 books per page
   clientSidePagination(pageNumber: number): void {
-    const pageSize = 8 // Number of items per page
-    const startIndex = (pageNumber - 1) * pageSize
-    const endIndex = startIndex + pageSize
+    const startIndex = (pageNumber - 1) * this.pageSize
+    const endIndex = startIndex + this.pageSize
 
     // Use all books for pagination if we have them
     if (this.allBooks && this.allBooks.length > 0) {
-      this.books = this.allBooks.slice(startIndex, endIndex)
-      this.totalItems = this.allBooks.length
+      // Store the full list of books
+      const fullBooksList = [...this.allBooks]
+
+      // Update the displayed books to only show 5 per page
+      this.books = fullBooksList.slice(startIndex, endIndex)
+
+      // Update total items and pages
+      this.totalItems = fullBooksList.length
       this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+
+      console.log(`Showing books ${startIndex + 1} to ${Math.min(endIndex, this.totalItems)} of ${this.totalItems}`)
     }
   }
 
@@ -703,6 +818,8 @@ export class DashboardComponent implements OnInit {
 
   getPaginationArray(): number[] {
     const paginationArray: number[] = []
+    
+    // Recalculate total pages based on pageSize=5
     const totalPages = Math.ceil(this.totalItems / this.pageSize)
     this.totalPages = totalPages
 

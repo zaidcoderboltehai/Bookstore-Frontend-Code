@@ -1,7 +1,16 @@
 <div class="order-summary-container" *ngIf="isVisible">
-  <div class="order-summary-content">
+  <!-- Clickable section header -->
+  <div class="section-header" (click)="toggleSummaryVisibility()">
     <h2 class="section-title">Order summary</h2>
-    
+    <div class="toggle-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </div>
+  </div>
+  
+  <div class="order-summary-content">
     <div class="order-item">
       <div class="item-image">
         <img [src]="orderDetails.imageUrl" [alt]="orderDetails.title">
@@ -18,6 +27,11 @@
       <div class="summary-row">
         <span class="summary-label">Items ({{ cartItems.length }}):</span>
         <span class="summary-value">Rs. {{ getTotal() }}</span>
+      </div>
+      <!-- Add this new section to show each book with its quantity -->
+      <div *ngFor="let item of cartItems" class="summary-row book-quantity-row">
+        <span class="summary-label">{{ item.title }} × {{ item.quantity }}</span>
+        <span class="summary-value">Rs. {{ item.price * item.quantity }}</span>
       </div>
       <div class="summary-row">
         <span class="summary-label">Delivery:</span>

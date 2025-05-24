@@ -133,15 +133,16 @@ export class BookService {
     )
   }
 
-  // Updated method for paginated books with improved URL structure and data transformation
-  getBooksByPage(pageNumber: number): Observable<any> {
+  // UPDATED: Modified to accept pageSize parameter
+  getBooksByPage(pageNumber: number, pageSize = 5): Observable<any> {
     // Support both formats: direct endpoint and query parameter
     let request
     try {
-      request = this.http.get(`${this.apiUrl}/api/Books/page/${pageNumber}`)
+      // Try with both page number and page size parameters
+      request = this.http.get(`${this.apiUrl}/api/Books/page/${pageNumber}?pageSize=${pageSize}`)
     } catch (error) {
       // Fallback to query parameter approach
-      request = this.http.get(`${this.apiUrl}/api/Books?page=${pageNumber}`)
+      request = this.http.get(`${this.apiUrl}/api/Books?page=${pageNumber}&pageSize=${pageSize}`)
     }
 
     // Add data transformation to fix author names and stock status

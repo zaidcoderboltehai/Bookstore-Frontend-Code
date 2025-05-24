@@ -325,3 +325,32 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .auth-image {
+    img[src="/assets/images/lady.png"] {
+      display: none;
+    }
+  }
+}
+
+// For smaller mobile devices only (480px or less)
+@media (max-width: 480px) {
+  .auth-image {
+    img[src="/assets/images/lady.png"] {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-image {
+    img[src="/assets/images/lady.png"] {
+      display: none;
+    }
+    
+    // Add padding or min-height to maintain space
+    min-height: 100px;
+    padding: 20px;
+  }
+}

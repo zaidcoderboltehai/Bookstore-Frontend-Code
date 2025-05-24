@@ -165,6 +165,11 @@
   }
 }
 
+.order-actions {
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 768px) {
   .address-details-content {
     max-width: 95%;
@@ -316,4 +321,22 @@
   margin: 20px 0;
   padding: 15px;
   background-color: #f9f9f9;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.toggle-icon {
+  color: #777;
+  transition: transform 0.3s ease;
 }

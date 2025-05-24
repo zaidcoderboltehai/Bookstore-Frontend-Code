@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, type OnInit } from "@angular/core"
+import { Component, EventEmitter, Input, Output, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { CartService } from "../services/cart.service"
 
@@ -30,6 +30,7 @@ export class OrderSummaryComponent implements OnInit {
   @Input() cartItems: CartItem[] = []
 
   @Output() checkout = new EventEmitter<void>()
+  @Output() toggleSummary = new EventEmitter<void>()
 
   constructor(private cartService: CartService) {}
 
@@ -81,5 +82,9 @@ export class OrderSummaryComponent implements OnInit {
     console.log("Proceeding to checkout with items:", this.cartItems)
     console.log("Total amount:", this.getTotal() + 40)
     this.checkout.emit()
+  }
+
+  toggleSummaryVisibility(): void {
+    this.toggleSummary.emit()
   }
 }
